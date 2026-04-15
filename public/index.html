@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tera — Your Shopping, Organized</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --tera: #d45158;
+      --tera-dark: #b33e45;
+      --black: #111;
+      --gray: #666;
+      --light: #f7f5f3;
+      --white: #fff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Instrument Sans', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--black); }
+
+    .nav-cta {
+      background: var(--black) !important;
+      color: var(--white) !important;
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--tera) !important; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--light);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-eyebrow span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--tera);
+      display: inline-block;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 12vw, 140px);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      color: var(--black);
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--tera);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--gray);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+
+    .btn-primary {
+      background: var(--tera);
+      color: var(--white);
+      padding: 16px 32px;
+      border-radius: 100px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--tera-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      color: var(--black);
+      padding: 16px 24px;
+      border-radius: 100px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .btn-secondary:hover { color: var(--tera); }
+
+    /* Phone mockup */
+    .hero-visual {
+      margin-top: 80px;
+      animation: fadeUp 0.8s ease 0.4s both;
+      position: relative;
+    }
+
+    .phone-frame {
+      width: 280px;
+      height: 560px;
+      background: var(--black);
+      border-radius: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .phone-screen {
+      width: 264px;
+      height: 544px;
+      background: var(--white);
+      border-radius: 38px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-status {
+      height: 44px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--black);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      flex-shrink: 0;
+    }
+
+    .phone-content {
+      flex: 1;
+      background: var(--light);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .notification-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .notif-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--tera);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      color: white;
+    }
+
+    .notif-text { flex: 1; }
+
+    .notif-brand {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .notif-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .notif-pill {
+      display: inline-block;
+      background: #fef2f2;
+      color: var(--tera);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-top: 4px;
+    }
+
+    /* Features */
+    .features {
+      padding: 120px 48px;
+      background: var(--light);
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tera);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1;
+      color: var(--black);
+      margin-bottom: 64px;
+      max-width: 600px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 32px;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #fef2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* Extension CTA */
+    .extension-cta {
+      padding: 120px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .extension-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--tera);
+      color: white;
+      border-radius: 12px 0 0 12px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 48px;
+      position: relative;
+      left: 20px;
+    }
+
+    .extension-cta h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      line-height: 0.95;
+      color: var(--black);
+      margin-bottom: 24px;
+    }
+
+    .extension-cta p {
+      font-size: 18px;
+      color: var(--gray);
+      max-width: 440px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    /* Waitlist */
+    .waitlist {
+      padding: 120px 48px;
+      background: var(--black);
+      text-align: center;
+    }
+
+    .waitlist h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 8vw, 96px);
+      color: var(--white);
+      line-height: 0.95;
+      margin-bottom: 16px;
+    }
+
+    .waitlist p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 40px;
+    }
+
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 440px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .waitlist-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 16px 20px;
+      border-radius: 100px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.3); }
+    .waitlist-input:focus { background: rgba(255,255,255,0.15); }
+
+    .waitlist-btn {
+      background: var(--tera);
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: 100px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .waitlist-btn:hover { background: var(--tera-dark); }
+
+    /* Footer */
+    footer {
+      padding: 40px 48px;
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    footer .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      color: var(--white);
+    }
+
+    footer p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .features { padding: 80px 24px; }
+      .extension-cta { padding: 80px 24px; }
+      .waitlist { padding: 80px 24px; }
+      footer { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">Tera</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#extension">Extension</a></li>
+      <li><a href="#waitlist">Waitlist</a></li>
+      <li><a href="/get-extension" class="nav-cta">Add to Safari</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow"><span></span> Now available on iOS</div>
+    <h1 class="hero-title">Your Shopping,<br /><em>Organized.</em></h1>
+    <p class="hero-sub">Tera monitors the brands you love so you're always first to know when sales drop. One app. Zero inbox clutter.</p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Join the waitlist ↗</a>
+      <a href="/get-extension" class="btn-secondary">Add to Safari →</a>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-status">9:41</div>
+          <div class="phone-content">
+            <div class="notification-card">
+              <div class="notif-logo">S</div>
+              <div class="notif-text">
+                <div class="notif-brand">Skims</div>
+                <div class="notif-title">25% off sitewide — today only</div>
+                <span class="notif-pill">SALE</span>
+              </div>
+            </div>
+            <div class="notification-card">
+              <div class="notif-logo" style="background:#111;">Z</div>
+              <div class="notif-text">
+                <div class="notif-brand">Zara</div>
+                <div class="notif-title">New collection just dropped</div>
+                <span class="notif-pill" style="background:#f0f0f0; color:#666;">NEW</span>
+              </div>
+            </div>
+            <div class="notification-card">
+              <div class="notif-logo" style="background:#8b5cf6;">R</div>
+              <div class="notif-text">
+                <div class="notif-brand">Reformation</div>
+                <div class="notif-title">Up to 40% off end of season</div>
+                <span class="notif-pill">SALE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="section-label">What Tera does</div>
+    <h2 class="section-title">Built for how you actually shop.</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📬</div>
+        <div class="feature-title">Brand notifications</div>
+        <p class="feature-desc">Tera monitors newsletters from every brand you follow and surfaces only what matters — sales, drops, and restocks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔖</div>
+        <div class="feature-title">Wishlist anywhere</div>
+        <p class="feature-desc">Save products from any website with one tap using the Tera Safari extension. No tab switching, no copy-pasting links.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📉</div>
+        <div class="feature-title">Price drop alerts</div>
+        <p class="feature-desc">We watch the price on anything you save. The moment it drops, you get notified — before anyone else.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎛️</div>
+        <div class="feature-title">Your rules</div>
+        <p class="feature-desc">Choose exactly how you get notified from every brand. Sales only, all updates, or nothing — totally up to you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="extension-cta" id="extension">
+    <div class="extension-pill">T &nbsp; Save to Tera?</div>
+    <h2>One tap while<br />you browse.</h2>
+    <p>The Tera Safari extension lets you save any product directly to your wishlist without leaving the page.</p>
+    <a href="/get-extension" class="btn-primary">Add Tera to Safari ↗</a>
+  </section>
+
+  <section class="waitlist" id="waitlist">
+    <h2>Join the<br />Waitlist.</h2>
+    <p>Get the first invite to Tera — sign up below.</p>
+    <div class="waitlist-form">
+      <input class="waitlist-input" type="email" placeholder="your@email.com" />
+      <button class="waitlist-btn">Get early access</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">Tera</div>
+    <p>© 2026 Tera Digital Inc.</p>
+  </footer>
+
+</body>
+</html>

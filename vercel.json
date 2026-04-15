@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/get-extension", "destination": "/get-extension.html" }
+  ]
+}
