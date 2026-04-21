@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/get-extension", "destination": "/get-extension.html" }
+    { "source": "/get-extension", "destination": "/get-extension.html" },
+    { "source": "/privacy", "destination": "/privacy.html" }
   ]
 }
