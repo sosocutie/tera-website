@@ -11,8 +11,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f8f6f4;
-      --card: #fffefe;
+      --bg: #ffffff;
+      --card: #ffffff;
       --ink: #181516;
       --muted: #77707a;
       --line: rgba(24, 21, 22, 0.10);
@@ -28,12 +28,10 @@
     body {
       min-height: 100vh;
       font-family: 'Instrument Sans', sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(227, 95, 139, 0.08), transparent 28%),
-        linear-gradient(180deg, #fcfbfa 0%, #f6f3f1 100%);
+      background: #ffffff;
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
-      padding: 24px 14px;
+      padding: 0;
     }
 
     .shell {
@@ -42,95 +40,26 @@
     }
 
     .screen {
-      background: var(--card);
-      border: 1px solid rgba(24, 21, 22, 0.06);
-      border-radius: 26px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      overflow: visible;
+      box-shadow: none;
       position: relative;
     }
 
     .screen::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #e8618d 0%, #ea638e 55%, #e25184 100%);
-    }
-
-    .browser-bar {
-      background: linear-gradient(180deg, #252429 0%, #17161a 100%);
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .traffic {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      flex-shrink: 0;
-    }
-
-    .dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-    }
-
-    .dot.red { background: #ff6d67; }
-    .dot.yellow { background: #f7c84e; }
-    .dot.green { background: #65d46d; }
-
-    .browser-actions,
-    .browser-tools {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: rgba(255,255,255,0.72);
-      flex-shrink: 0;
-    }
-
-    .browser-actions svg,
-    .browser-tools svg {
-      width: 15px;
-      height: 15px;
-      stroke: currentColor;
-    }
-
-    .address-pill {
-      flex: 1;
-      min-width: 0;
-      height: 34px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.34);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.82);
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .address-pill svg {
-      width: 13px;
-      height: 13px;
-      stroke: currentColor;
+      display: none;
     }
 
     .content {
-      padding: 26px 22px 32px;
+      padding: 8px 22px 32px;
     }
 
     .wordmark {
       display: block;
-      width: min(162px, 56%);
-      margin: 0 auto 22px;
+      width: min(176px, 58%);
+      margin: 0 auto 28px;
     }
 
     .progress {
@@ -550,7 +479,7 @@
     }
 
     .hint-top-left {
-      top: -298px;
+      top: -238px;
       left: -6px;
     }
 
@@ -573,19 +502,15 @@
     @media (max-width: 520px) {
       body {
         padding: 0;
-        background: #f8f6f4;
+        background: #ffffff;
       }
 
       .screen {
-        border-radius: 0;
         min-height: 100vh;
-        border-left: 0;
-        border-right: 0;
-        box-shadow: none;
       }
 
       .content {
-        padding: 22px 18px 28px;
+        padding: 12px 18px 28px;
       }
 
       .progress {
@@ -610,7 +535,7 @@
       }
 
       .hint-top-left {
-        top: -280px;
+        top: -222px;
         left: -10px;
       }
 
@@ -629,30 +554,6 @@
 <body>
   <main class="shell">
     <section class="screen">
-      <div class="browser-bar">
-        <div class="traffic" aria-hidden="true">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-        </div>
-
-        <div class="browser-actions" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M14 6L8 12L14 18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <svg viewBox="0 0 24 24" fill="none"><path d="M10 6L16 12L10 18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-
-        <div class="address-pill">
-          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke-width="1.8"/><path d="M16 16L20 20" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span>tera.com</span>
-        </div>
-
-        <div class="browser-tools" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4" stroke-width="1.8" stroke-linecap="round"/><path d="M8 8L12 4L16 8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13.5V18C5 18.55 5.45 19 6 19H18C18.55 19 19 18.55 19 18V13.5" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19" stroke-width="1.8" stroke-linecap="round"/><path d="M5 12H19" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <svg viewBox="0 0 24 24" fill="none"><rect x="8" y="4" width="12" height="16" rx="2" stroke-width="1.8"/><path d="M4 8V18C4 19.1 4.9 20 6 20H16" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-      </div>
-
       <div class="content">
         <img class="wordmark" src="assets/tera-wordmark.png" alt="Tera" />
 
