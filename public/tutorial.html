@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tera Tutorial Demo</title>
+  <meta name="tera-tutorial" content="true" />
+  <meta name="tera-tutorial-type" content="shopping-demo" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fbf9f7;
+      --surface: #ffffff;
+      --surface-soft: #f4efea;
+      --ink: #181618;
+      --muted: #736b73;
+      --line: rgba(24, 22, 24, 0.10);
+      --pink: #e35f8b;
+      --pink-soft: #fff1f6;
+      --blue: #1f64ea;
+      --shadow: 0 24px 60px rgba(30, 24, 31, 0.10);
+    }
+
+    body {
+      font-family: 'Instrument Sans', sans-serif;
+      background: linear-gradient(180deg, #fdfbfa 0%, #f7f3ef 100%);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .menu {
+      width: 22px;
+      height: 16px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .menu::before,
+    .menu::after,
+    .menu span {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--ink);
+    }
+
+    .menu::before { top: 0; }
+    .menu span { top: 7px; }
+    .menu::after { bottom: 0; }
+
+    .brand-name {
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.07em;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .icon-button {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+    }
+
+    .icon-button svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 28px));
+      margin: 24px auto 120px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .thumbs {
+      display: grid;
+      gap: 12px;
+    }
+
+    .thumb {
+      aspect-ratio: 0.82;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #f5efe9 0%, #eee6de 100%);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .thumb.active {
+      box-shadow: inset 0 0 0 2px rgba(227, 95, 139, 0.45);
+      border-color: rgba(227, 95, 139, 0.35);
+    }
+
+    .thumb::before,
+    .main-image::before {
+      content: '';
+      position: absolute;
+      inset: 14% 14% 18%;
+      border-radius: 45% 45% 18% 18% / 34% 34% 18% 18%;
+      background:
+        linear-gradient(180deg, #cbb79d 0%, #a58d74 100%) top center / 10% 26% no-repeat,
+        radial-gradient(circle at 32% 42%, #8da8ea 0 9%, transparent 10%),
+        radial-gradient(circle at 62% 38%, #f2d575 0 8%, transparent 9%),
+        radial-gradient(circle at 44% 68%, #84cfb5 0 8%, transparent 9%),
+        linear-gradient(135deg, #dfd7cf 0%, #cfc3b7 100%);
+      box-shadow: inset 0 0 0 2px rgba(70, 60, 50, 0.12);
+    }
+
+    .thumb::after,
+    .main-image::after {
+      content: '';
+      position: absolute;
+      left: 28%;
+      right: 28%;
+      top: 10%;
+      height: 14%;
+      border: 4px solid #b29a7f;
+      border-bottom: 0;
+      border-radius: 999px 999px 0 0;
+    }
+
+    .main-image {
+      aspect-ratio: 0.92;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #f7f2ec 0%, #efe7de 100%);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tag {
+      position: absolute;
+      left: 58%;
+      top: 48%;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid rgba(24, 22, 24, 0.08);
+      box-shadow: 0 18px 32px rgba(25, 20, 26, 0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.06em;
+      transform: rotate(-14deg);
+    }
+
+    .detail-panel {
+      position: relative;
+    }
+
+    .detail-panel h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.04;
+      letter-spacing: -0.06em;
+      margin-bottom: 12px;
+      max-width: 11ch;
+    }
+
+    .price {
+      font-size: 36px;
+      font-weight: 600;
+      letter-spacing: -0.05em;
+      margin-bottom: 18px;
+    }
+
+    .meta-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(24, 22, 24, 0.12);
+      background: var(--swatch, #ddd);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+    }
+
+    .swatch.active {
+      outline: 2px solid rgba(31, 100, 234, 0.38);
+      outline-offset: 2px;
+    }
+
+    .size-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .add-button {
+      width: 100%;
+      min-height: 56px;
+      border: 0;
+      border-radius: 0;
+      background: #121114;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .copy-block {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .accordion {
+      border-top: 1px solid var(--line);
+    }
+
+    .accordion-item {
+      border-bottom: 1px solid var(--line);
+      padding: 18px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .accordion-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .tutorial-anchor {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    #tera-extension-anchor {
+      top: 6px;
+      right: -8px;
+      width: 160px;
+      height: 70px;
+    }
+
+    #tera-drawer-anchor {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      width: min(92vw, 760px);
+      height: 34px;
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    .tutorial-pill {
+      position: fixed;
+      top: 122px;
+      right: 24px;
+      z-index: 6;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #2a6dff 0%, #145ce8 100%);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 22px 34px rgba(20, 92, 232, 0.25);
+    }
+
+    .tutorial-pill.hidden {
+      display: none;
+    }
+
+    .pill-grid {
+      width: 16px;
+      height: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .pill-grid span {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.82);
+    }
+
+    .tutorial-badge {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      z-index: 6;
+      background: rgba(255,255,255,0.96);
+      color: var(--ink);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(24, 22, 24, 0.08);
+      text-align: center;
+      min-width: min(92vw, 360px);
+    }
+
+    .tutorial-badge strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.06em;
+      margin-bottom: 6px;
+    }
+
+    .tutorial-badge p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .tutorial-arrow {
+      position: fixed;
+      z-index: 6;
+      color: #efb800;
+      pointer-events: none;
+    }
+
+    .tutorial-arrow svg {
+      width: 84px;
+      height: 84px;
+      overflow: visible;
+    }
+
+    .tutorial-arrow path {
+      stroke: currentColor;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .tutorial-arrow.top {
+      top: 72px;
+      right: 178px;
+    }
+
+    .tutorial-arrow.bottom {
+      right: 64px;
+      bottom: 154px;
+    }
+
+    .fallback-note {
+      position: fixed;
+      left: 50%;
+      top: 88px;
+      transform: translateX(-50%);
+      z-index: 7;
+      width: min(92vw, 540px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(24, 22, 24, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .fallback-note.hidden {
+      display: none;
+    }
+
+    .fallback-copy strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .fallback-copy span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .fallback-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .fallback-link {
+      border: 0;
+      background: #121114;
+      color: white;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .ghost-link {
+      border: 0;
+      background: transparent;
+      color: var(--pink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-panel h1 {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 16px 14px;
+      }
+
+      .page {
+        width: calc(100% - 20px);
+        margin: 16px auto 130px;
+      }
+
+      .gallery {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .thumbs {
+        gap: 8px;
+      }
+
+      .tag {
+        width: 68px;
+        height: 68px;
+        font-size: 22px;
+      }
+
+      .tutorial-pill {
+        top: 136px;
+        right: 14px;
+        font-size: 14px;
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .tutorial-arrow.top {
+        top: 94px;
+        right: 122px;
+      }
+
+      .tutorial-arrow.bottom {
+        right: 28px;
+        bottom: 188px;
+      }
+
+      .tutorial-arrow svg {
+        width: 72px;
+        height: 72px;
+      }
+
+      .tutorial-badge {
+        bottom: 18px;
+        min-width: min(94vw, 340px);
+      }
+
+      .tutorial-badge strong {
+        font-size: 22px;
+      }
+
+      .fallback-note {
+        top: 76px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .fallback-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      #tera-extension-anchor {
+        top: -2px;
+        right: -2px;
+        width: 136px;
+      }
+    }
+  </style>
+</head>
+<body data-tera-tutorial="shopping-demo" data-tera-product-id="tera-demo-bag">
+  <header class="topbar">
+    <div class="brand">
+      <div class="menu"><span></span></div>
+      <div class="brand-name">Aureli</div>
+    </div>
+
+    <div class="top-actions">
+      <span class="icon-button" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16L20 20"></path></svg>
+      </span>
+      <span class="icon-button" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 20C12 20 4 15.4 4 9.6C4 7 6 5 8.6 5C10.2 5 11.4 5.8 12 7C12.6 5.8 13.8 5 15.4 5C18 5 20 7 20 9.6C20 15.4 12 20 12 20Z"></path></svg>
+      </span>
+      <span class="icon-button" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M8 8H21L19.5 18H9.5L8 8Z"></path><path d="M8 8L6.7 5.4C6.4 4.8 5.8 4.5 5.1 4.5H3"></path></svg>
+      </span>
+    </div>
+  </header>
+
+  <div class="fallback-note" id="fallback-note">
+    <div class="fallback-copy">
+      <strong>Tera tutorial page</strong>
+      <span>Once the extension is active, it can recognize this page and replace the fallback with the real onboarding overlay.</span>
+    </div>
+    <div class="fallback-actions">
+      <a class="fallback-link" href="get-extension.html?step=grant-access">Back to setup</a>
+      <button class="ghost-link" id="hide-fallback" type="button">Dismiss</button>
+    </div>
+  </div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="gallery">
+        <div class="thumbs" aria-hidden="true">
+          <div class="thumb active"></div>
+          <div class="thumb"></div>
+          <div class="thumb"></div>
+          <div class="thumb"></div>
+        </div>
+
+        <div class="main-image">
+          <div class="tag">A</div>
+        </div>
+      </div>
+
+      <div class="detail-panel">
+        <div id="tera-extension-anchor" class="tutorial-anchor" aria-hidden="true"></div>
+
+        <h1>Marin Beaded Shoulder Bag</h1>
+        <div class="price">$295</div>
+
+        <div class="meta-label">Colors</div>
+        <div class="swatches" aria-hidden="true">
+          <span class="swatch active" style="--swatch:linear-gradient(135deg,#f5f0e8 0%,#d9d2ca 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#e4ad5a 0%,#d17a3f 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#dc8ba4 0%,#be596f 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#81a4e0 0%,#5477b7 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#addcbf 0%,#5ea98e 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#f6d88a 0%,#d5aa2d 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#373840 0%,#1e1f23 100%);"></span>
+          <span class="swatch" style="--swatch:linear-gradient(135deg,#efd6d0 0%,#dba9a0 100%);"></span>
+        </div>
+
+        <a class="size-link" href="#">Aureli size guide and style measurements</a>
+
+        <button class="add-button" type="button">Add to bag</button>
+
+        <div class="copy-block">A hand-beaded shoulder bag with a sculpted top handle, satin lining, and enough room for your phone, keys, and card case.</div>
+
+        <div class="accordion">
+          <div class="accordion-item">
+            <span>Description</span>
+            <svg viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"></path></svg>
+          </div>
+          <div class="accordion-item">
+            <span>Details</span>
+            <svg viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"></path></svg>
+          </div>
+          <div class="accordion-item">
+            <span>Shipping & returns</span>
+            <svg viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"></path></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="tera-drawer-anchor" class="tutorial-anchor" aria-hidden="true"></div>
+
+  <div class="tutorial-pill" id="tutorial-pill">
+    <span>Should I buy this?</span>
+    <span class="pill-grid" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </span>
+  </div>
+
+  <div class="tutorial-arrow top" id="tutorial-arrow-top" aria-hidden="true">
+    <svg viewBox="0 0 84 84">
+      <path d="M70 72C60 55 51 44 41 35C34 29 28 25 21 23" />
+      <path d="M21 23L31 17" />
+      <path d="M21 23L27 33" />
+    </svg>
+  </div>
+
+  <div class="tutorial-arrow bottom" id="tutorial-arrow-bottom" aria-hidden="true">
+    <svg viewBox="0 0 84 84">
+      <path d="M18 12C29 24 37 36 44 49C48 57 50 65 50 73" />
+      <path d="M50 73L42 64" />
+      <path d="M50 73L58 64" />
+    </svg>
+  </div>
+
+  <div class="tutorial-badge" id="tutorial-badge">
+    <strong>This is a tutorial ✨</strong>
+    <p>Once the extension is live, the real Tera onboarding can point to the blue button above and open the bottom drawer here.</p>
+  </div>
+
+  <script>
+    window.__TERA_TUTORIAL_PAGE__ = {
+      version: 1,
+      type: 'shopping-demo',
+      productId: 'tera-demo-bag',
+      productTitle: 'Marin Beaded Shoulder Bag',
+      productPrice: '$295',
+      anchors: {
+        extension: '#tera-extension-anchor',
+        drawer: '#tera-drawer-anchor'
+      },
+      mode: 'first-run'
+    };
+
+    (function () {
+      var fallbackNote = document.getElementById('fallback-note');
+      var hideFallback = document.getElementById('hide-fallback');
+      var tutorialPill = document.getElementById('tutorial-pill');
+      var tutorialBadge = document.getElementById('tutorial-badge');
+      var tutorialArrowTop = document.getElementById('tutorial-arrow-top');
+      var tutorialArrowBottom = document.getElementById('tutorial-arrow-bottom');
+
+      function setExtensionReady() {
+        document.documentElement.dataset.teraExtensionReady = 'true';
+        if (fallbackNote) fallbackNote.classList.add('hidden');
+        if (tutorialPill) tutorialPill.classList.add('hidden');
+        if (tutorialBadge) tutorialBadge.classList.add('hidden');
+        if (tutorialArrowTop) tutorialArrowTop.style.display = 'none';
+        if (tutorialArrowBottom) tutorialArrowBottom.style.display = 'none';
+      }
+
+      window.addEventListener('tera-extension-ready', setExtensionReady);
+
+      if (hideFallback && fallbackNote) {
+        hideFallback.addEventListener('click', function () {
+          fallbackNote.classList.add('hidden');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

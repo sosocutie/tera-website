@@ -3,347 +3,884 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Tera to Safari</title>
+  <title>Tera Safari Setup</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --tera: #d45158;
-      --tera-dark: #b33e45;
-      --black: #111;
-      --gray: #666;
-      --light: #f7f5f3;
-      --white: #fff;
+      --bg: #f8f6f4;
+      --card: #fffefe;
+      --ink: #181516;
+      --muted: #77707a;
+      --line: rgba(24, 21, 22, 0.10);
+      --shadow: 0 28px 70px rgba(25, 17, 24, 0.10);
+      --pink: #e35f8b;
+      --pink-soft: #f8dbe7;
+      --pink-wash: #fff4f8;
+      --blackbar: #1c1b1f;
+      --success: #111111;
+      --gray-step: #cfcddb;
     }
+
     body {
-      font-family: 'Instrument Sans', sans-serif;
-      background: var(--white);
-      color: var(--black);
-      -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      font-family: 'Instrument Sans', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(227, 95, 139, 0.08), transparent 28%),
+        linear-gradient(180deg, #fcfbfa 0%, #f6f3f1 100%);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      padding: 24px 14px;
     }
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 48px;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-    .nav-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 28px;
-      color: var(--black);
-      text-decoration: none;
-    }
-    .nav-back {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--gray);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--black); }
-    .hero {
-      padding: 80px 48px 64px;
-      text-align: center;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #fef2f2;
-      color: var(--tera);
-      border-radius: 100px;
-      padding: 6px 16px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 28px;
-    }
-    .hero h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(48px, 8vw, 88px);
-      line-height: 0.95;
-      color: var(--black);
-      margin-bottom: 20px;
-    }
-    .hero p {
-      font-size: 17px;
-      color: var(--gray);
-      max-width: 400px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-    }
-    .steps-section {
+
+    .shell {
       max-width: 560px;
       margin: 0 auto;
-      padding: 64px 24px;
     }
-    .steps-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--tera);
-      margin-bottom: 8px;
+
+    .screen {
+      background: var(--card);
+      border: 1px solid rgba(24, 21, 22, 0.06);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
     }
-    .steps-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--black);
-      margin-bottom: 40px;
+
+    .screen::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #e8618d 0%, #ea638e 55%, #e25184 100%);
     }
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-    .step-number {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--black);
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .step-content { flex: 1; padding-top: 8px; }
-    .step-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--black);
-      margin-bottom: 4px;
-    }
-    .step-desc {
-      font-size: 14px;
-      color: var(--gray);
-      line-height: 1.6;
-    }
-    .step-visual {
-      background: var(--light);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 12px;
+
+    .browser-bar {
+      background: linear-gradient(180deg, #252429 0%, #17161a 100%);
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .traffic {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #ff6d67; }
+    .dot.yellow { background: #f7c84e; }
+    .dot.green { background: #65d46d; }
+
+    .browser-actions,
+    .browser-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.72);
+      flex-shrink: 0;
+    }
+
+    .browser-actions svg,
+    .browser-tools svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+    }
+
+    .address-pill {
+      flex: 1;
+      min-width: 0;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.82);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .address-pill svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+    }
+
+    .content {
+      padding: 26px 22px 32px;
+    }
+
+    .wordmark {
+      display: block;
+      width: min(162px, 56%);
+      margin: 0 auto 22px;
+    }
+
+    .progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
       font-size: 14px;
       font-weight: 600;
-      color: var(--black);
+      flex-wrap: nowrap;
     }
-    .step-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: var(--white);
-      border: 1px solid rgba(0,0,0,0.1);
-      display: flex;
+
+    .progress-step {
+      border: 0;
+      background: transparent;
+      color: var(--gray-step);
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 16px;
+      gap: 9px;
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
     }
-    .toggle-visual {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--light);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-top: 12px;
+
+    .progress-step.active,
+    .progress-step.done {
+      color: var(--ink);
     }
-    .toggle-track {
-      width: 48px;
-      height: 28px;
-      border-radius: 100px;
-      background: var(--tera);
-      position: relative;
-      flex-shrink: 0;
+
+    .progress-step.done {
+      color: var(--pink);
     }
-    .toggle-thumb {
+
+    .progress-badge {
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: white;
-      position: absolute;
-      top: 3px;
-      right: 3px;
-    }
-    .toggle-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--black);
-    }
-    .step-connector {
-      width: 1px;
-      height: 24px;
-      background: rgba(0,0,0,0.1);
-      margin: -8px 0 -8px 19px;
-    }
-    .privacy {
-      background: var(--light);
-      border-radius: 20px;
-      padding: 24px;
-      margin-top: 8px;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-    }
-    .privacy-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--white);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--gray-step);
+      color: white;
       flex-shrink: 0;
     }
-    .privacy-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--black);
-      margin-bottom: 4px;
+
+    .progress-step.active .progress-badge {
+      background: #111111;
     }
-    .privacy-desc {
-      font-size: 13px;
-      color: var(--gray);
+
+    .progress-step.done .progress-badge {
+      background: var(--pink);
+    }
+
+    .progress-line {
+      width: 92px;
+      max-width: 16vw;
+      height: 1px;
+      background: #ead9e2;
+      flex-shrink: 0;
+    }
+
+    .panel {
+      display: none;
+      position: relative;
+    }
+
+    .panel.active {
+      display: block;
+      animation: fadeUp 0.22s ease;
+    }
+
+    .headline {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .headline h1 {
+      font-size: clamp(22px, 4vw, 24px);
+      line-height: 1.28;
+      letter-spacing: -0.03em;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .headline p {
+      max-width: 380px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 14px;
       line-height: 1.5;
     }
-    .cta-section {
-      padding: 0 24px 80px;
-      max-width: 560px;
-      margin: 0 auto;
+
+    .pink {
+      color: var(--pink);
     }
-    .btn-primary {
+
+    .steps {
+      display: grid;
+      gap: 24px;
+      max-width: 380px;
+      margin: 0 auto 34px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .step-num {
+      font-size: 15px;
+      font-weight: 500;
+      justify-self: center;
+    }
+
+    .step-copy {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    .step-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      background: #fff;
+      border: 1px solid rgba(24, 21, 22, 0.08);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+      border-radius: 14px;
+      padding: 8px 10px;
+      flex-shrink: 0;
+    }
+
+    .step-chip svg {
+      width: 22px;
+      height: 22px;
+      stroke: #1c1a1d;
+    }
+
+    .extensions-chip {
+      gap: 10px;
+      padding: 9px 12px;
+    }
+
+    .toggle-demo {
+      gap: 8px;
+      padding: 6px 10px 6px 6px;
+      border-radius: 17px;
+      background: var(--pink-wash);
+      border-color: rgba(227, 95, 139, 0.16);
+      box-shadow: none;
+    }
+
+    .toggle-demo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .switch {
+      width: 43px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #de638e 0%, #df5c87 100%);
+      position: relative;
+    }
+
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .callout {
+      max-width: 380px;
+      margin: 0 auto 28px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff4f8 0%, #faedf2 100%);
+      padding: 20px 18px;
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .sparkle {
+      color: var(--pink);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .callout strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+
+    .callout span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 24px 1fr;
+      gap: 10px;
+      align-items: center;
+      max-width: 410px;
+      margin: 0 auto 24px;
+    }
+
+    .compare-arrow {
+      text-align: center;
+      font-size: 32px;
+      color: #444;
+      line-height: 1;
+    }
+
+    .card-mini {
+      border: 1px solid rgba(24, 21, 22, 0.08);
+      border-radius: 18px;
+      background: #fff;
+      padding: 10px 10px 12px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+    }
+
+    .card-mini-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .choice {
+      border: 1px solid rgba(24, 21, 22, 0.08);
+      border-radius: 10px;
+      height: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: var(--tera);
-      color: white;
-      padding: 18px 32px;
-      border-radius: 100px;
-      font-size: 17px;
+      font-size: 10px;
+      color: #5f5962;
+      margin-bottom: 6px;
+      text-align: center;
+      padding: 0 6px;
+      background: #fff;
+    }
+
+    .choice:last-child {
+      margin-bottom: 0;
+    }
+
+    .choice.highlight {
+      background: linear-gradient(90deg, #ffe9f1 0%, #ffeef3 100%);
+      color: var(--pink);
       font-weight: 700;
-      text-decoration: none;
-      font-family: 'Instrument Sans', sans-serif;
-      transition: background 0.2s, transform 0.15s;
-      border: none;
+      border-color: rgba(227, 95, 139, 0.14);
+    }
+
+    .choice.primary {
+      color: #232024;
+      font-weight: 700;
+    }
+
+    .cta {
+      max-width: 400px;
+      margin: 0 auto 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cta-button {
+      min-height: 54px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(180deg, #1e1b20 0%, #0f0e12 100%);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(16, 13, 17, 0.14);
+    }
+
+    .cta-secondary {
+      border: 0;
+      background: transparent;
+      color: var(--pink);
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
     }
-    .btn-primary:hover {
-      background: var(--tera-dark);
-      transform: translateY(-1px);
-    }
-    .cta-note {
+
+    .helper {
+      max-width: 390px;
+      margin: 0 auto 18px;
       text-align: center;
+      color: var(--muted);
       font-size: 13px;
-      color: var(--gray);
-      margin-top: 12px;
+      line-height: 1.5;
     }
-    .already {
-      text-align: center;
-      padding: 0 24px 48px;
-      font-size: 14px;
-      color: var(--gray);
-    }
-    .already a {
-      color: var(--tera);
-      font-weight: 600;
+
+    .tutorial-link {
+      display: none;
+      margin: 0 auto 18px;
+      width: min(100%, 400px);
+      min-height: 54px;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #e96f96 0%, #dd5f88 100%);
+      color: white;
       text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      box-shadow: 0 14px 28px rgba(227, 95, 139, 0.22);
     }
-    @media (max-width: 640px) {
-      nav { padding: 16px 24px; }
-      .hero { padding: 48px 24px 40px; }
-      .steps-section { padding: 48px 24px; }
+
+    .tutorial-link.show {
+      display: inline-flex;
+    }
+
+    .footer {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .footer-inner {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .footer svg {
+      width: 13px;
+      height: 13px;
+      stroke: var(--pink);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .confirmation-note {
+      display: none;
+      max-width: 390px;
+      margin: 0 auto 18px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: var(--pink-wash);
+      color: #9e4665;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .confirmation-note.show {
+      display: block;
+    }
+
+    .redirect-note {
+      display: none;
+      max-width: 390px;
+      margin: 0 auto 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .redirect-note.show {
+      display: block;
+    }
+
+    .hint-arrow {
+      position: absolute;
+      color: #1f1a1d;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .hint-arrow svg {
+      width: 84px;
+      height: 84px;
+      overflow: visible;
+    }
+
+    .hint-arrow path {
+      stroke: currentColor;
+      stroke-width: 3.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .hint-top-left {
+      top: -298px;
+      left: -6px;
+    }
+
+    .hint-bottom-left {
+      left: -10px;
+      bottom: -54px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 0;
+        background: #f8f6f4;
+      }
+
+      .screen {
+        border-radius: 0;
+        min-height: 100vh;
+        border-left: 0;
+        border-right: 0;
+        box-shadow: none;
+      }
+
+      .content {
+        padding: 22px 18px 28px;
+      }
+
+      .progress {
+        gap: 8px;
+        font-size: 13px;
+      }
+
+      .progress-line {
+        width: 58px;
+      }
+
+      .step-copy {
+        font-size: 15px;
+      }
+
+      .compare {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-arrow {
+        transform: rotate(90deg);
+      }
+
+      .hint-top-left {
+        top: -280px;
+        left: -10px;
+      }
+
+      .hint-bottom-left {
+        left: -12px;
+        bottom: -46px;
+      }
+
+      .hint-arrow svg {
+        width: 72px;
+        height: 72px;
+      }
     }
   </style>
 </head>
 <body>
+  <main class="shell">
+    <section class="screen">
+      <div class="browser-bar">
+        <div class="traffic" aria-hidden="true">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
 
-  <nav>
-    <a href="/" class="nav-logo">Tera</a>
-    <a href="/" class="nav-back">← Back</a>
-  </nav>
+        <div class="browser-actions" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 6L8 12L14 18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M10 6L16 12L10 18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
 
-  <section class="hero">
-    <div class="hero-badge">🧩 Safari Extension</div>
-    <h1>Add Tera<br />to Safari.</h1>
-    <p>Save any product to your wishlist and get notified when prices drop — without leaving the page.</p>
-  </section>
+        <div class="address-pill">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke-width="1.8"/><path d="M16 16L20 20" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>tera.com</span>
+        </div>
 
-  <div class="steps-section">
-    <div class="steps-label">Setup guide</div>
-    <div class="steps-title">Enable in 3 steps</div>
-
-    <div class="step">
-      <div class="step-number">1</div>
-      <div class="step-content">
-        <div class="step-title">Tap the address bar icon in Safari</div>
-        <div class="step-desc">Look for the page settings icon on the left side of the address bar in Safari.</div>
-        <div class="step-visual">
-          <div class="step-icon">⎆</div>
-          Tap the icon in the address bar
+        <div class="browser-tools" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4" stroke-width="1.8" stroke-linecap="round"/><path d="M8 8L12 4L16 8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13.5V18C5 18.55 5.45 19 6 19H18C18.55 19 19 18.55 19 18V13.5" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19" stroke-width="1.8" stroke-linecap="round"/><path d="M5 12H19" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="8" y="4" width="12" height="16" rx="2" stroke-width="1.8"/><path d="M4 8V18C4 19.1 4.9 20 6 20H16" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
       </div>
-    </div>
 
-    <div class="step-connector"></div>
+      <div class="content">
+        <img class="wordmark" src="assets/tera-wordmark.png" alt="Tera" />
 
-    <div class="step">
-      <div class="step-number">2</div>
-      <div class="step-content">
-        <div class="step-title">Select "Manage Extensions"</div>
-        <div class="step-desc">A menu will appear — tap Manage Extensions to see all your installed extensions.</div>
-        <div class="step-visual">
-          <div class="step-icon">⇄</div>
-          Manage Extensions
+        <div class="progress">
+          <button class="progress-step active" type="button" data-step-target="activate">
+            <span class="progress-badge">1</span>
+            <span>Activate Tera</span>
+          </button>
+          <span class="progress-line" aria-hidden="true"></span>
+          <button class="progress-step" type="button" data-step-target="grant-access">
+            <span class="progress-badge">2</span>
+            <span>Grant access</span>
+          </button>
+        </div>
+
+        <section class="panel active" data-panel="activate">
+          <div class="hint-arrow hint-top-left" aria-hidden="true">
+            <svg viewBox="0 0 74 74">
+              <path d="M23 66C16 54 14 43 18 33C21 25 28 22 34 25C39 27 40 34 36 40C33 45 27 47 21 45" />
+              <path d="M21 45C12 41 8 33 8 21" />
+              <path d="M8 21L4 31" />
+              <path d="M8 21L18 26" />
+            </svg>
+          </div>
+
+          <div class="headline">
+            <h1>Let's get Tera set up in Safari <span class="pink">✨</span></h1>
+            <p>A few quick steps to unlock better prices, faster saves, and brand perks.</p>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1.</div>
+              <div class="step-copy">
+                <span>Tap</span>
+                <span class="step-chip" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="5" y="4.5" width="14" height="10" rx="2.6" stroke-width="1.8"/>
+                    <path d="M8 19H16" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M9 11H15" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M8.4 8H15.6" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>in the address bar</span>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">2.</div>
+              <div class="step-copy">
+                <span>Select</span>
+                <span class="step-chip extensions-chip" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 8H11.2C11.75 8 12.2 7.55 12.2 7V5.8C12.2 5.25 12.65 4.8 13.2 4.8H14.9C15.45 4.8 15.9 5.25 15.9 5.8V7C15.9 7.55 16.35 8 16.9 8H18C18.55 8 19 8.45 19 9V14.2C19 14.75 18.55 15.2 18 15.2H16.9C16.35 15.2 15.9 15.65 15.9 16.2V17.4C15.9 17.95 15.45 18.4 14.9 18.4H13.2C12.65 18.4 12.2 17.95 12.2 17.4V16.2C12.2 15.65 11.75 15.2 11.2 15.2H7C6.45 15.2 6 14.75 6 14.2V9C6 8.45 6.45 8 7 8Z" stroke-width="1.6" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span>Manage Extensions</span>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">3.</div>
+              <div class="step-copy">
+                <span>Toggle Tera on</span>
+                <span class="step-chip toggle-demo" aria-hidden="true">
+                  <img src="assets/tera-app-icon.png" alt="" />
+                  <span class="switch"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="sparkle" aria-hidden="true">✨</div>
+            <div>
+              <strong>Tera helps you save more effortlessly.</strong>
+              <span>We find better prices, track drops, and let you save items in one tap.</span>
+            </div>
+          </div>
+
+          <div class="cta">
+            <button class="cta-button" type="button" data-step-target="grant-access">I've toggled Tera on</button>
+          </div>
+
+          <div class="hint-arrow hint-bottom-left" aria-hidden="true">
+            <svg viewBox="0 0 74 74">
+              <path d="M26 7C31 18 32 28 28 39C25 47 19 51 13 49C8 47 6 43 7 38C8 33 12 30 18 30" />
+              <path d="M18 30C27 30 33 38 34 49" />
+              <path d="M34 49C35 56 33 62 31 68" />
+              <path d="M31 68L24 60" />
+              <path d="M31 68L39 61" />
+            </svg>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="grant-access">
+          <div class="headline">
+            <h1>Tap <span class="pink">“Always Allow”</span> so Tera can show up on your shopping websites <span class="pink">🛍</span></h1>
+            <p>It will only appear on brand websites when you shop.</p>
+          </div>
+
+          <div class="compare">
+            <div class="card-mini">
+              <div class="card-mini-label">Before</div>
+              <div class="choice primary">Always Allow</div>
+              <div class="choice">Ask on Every Website</div>
+              <div class="choice">Don't Allow</div>
+            </div>
+
+            <div class="compare-arrow" aria-hidden="true">→</div>
+
+            <div class="card-mini">
+              <div class="card-mini-label">After</div>
+              <div class="choice highlight">Always Allow on Every Website</div>
+              <div class="choice">Ask on Every Website</div>
+              <div class="choice">Don't Allow</div>
+            </div>
+          </div>
+
+          <div class="cta">
+            <button class="cta-button" type="button" id="confirm-access">Tap Always Allow</button>
+            <button class="cta-secondary" type="button" data-step-target="activate">Back to activate Tera</button>
+          </div>
+
+          <div class="confirmation-note" id="confirmation-note">Safari may ask one more time after that. Choose <strong>Always Allow on Every Website</strong> to finish setup.</div>
+          <div class="redirect-note" id="redirect-note">Opening the ASOS product page automatically...</div>
+          <a class="tutorial-link" id="tutorial-link" href="https://www.asos.com/us/asos-design/asos-design-linen-blend-deep-v-maxi-sundress-in-blue/prd/210967548?ctaref=deliver+to+delivery+country&r=1">Try Tera on ASOS</a>
+
+          <div class="helper">For now, send the user straight to a real supported product page. The first-use toasts, arrows, and onboarding overlays should come from the extension itself.</div>
+        </section>
+
+        <div class="footer">
+          <div class="footer-inner">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 11V8.5C7 5.74 9.24 3.5 12 3.5C14.76 3.5 17 5.74 17 8.5V11" stroke-width="1.8" stroke-linecap="round"/>
+              <rect x="5.5" y="11" width="13" height="9" rx="2" stroke-width="1.8"/>
+            </svg>
+            <span>Save items and follow brands<br />quickly directly from websites.</span>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <div class="step-connector"></div>
+  <script>
+    (function () {
+      var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-step-target]'));
+      var panels = Array.prototype.slice.call(document.querySelectorAll('[data-panel]'));
+      var progressSteps = Array.prototype.slice.call(document.querySelectorAll('.progress-step'));
+      var confirmAccessButton = document.getElementById('confirm-access');
+      var confirmationNote = document.getElementById('confirmation-note');
+      var redirectNote = document.getElementById('redirect-note');
+      var tutorialLink = document.getElementById('tutorial-link');
 
-    <div class="step">
-      <div class="step-number">3</div>
-      <div class="step-content">
-        <div class="step-title">Toggle Tera on</div>
-        <div class="step-desc">Find Tera in the list and toggle it on. Tap "Always Allow on Every Website" when prompted.</div>
-        <div class="toggle-visual">
-          <div class="toggle-track"><div class="toggle-thumb"></div></div>
-          <span class="toggle-label">Tera — enabled</span>
-        </div>
-      </div>
-    </div>
+      function setStep(step, replaceHistory) {
+        panels.forEach(function (panel) {
+          panel.classList.toggle('active', panel.getAttribute('data-panel') === step);
+        });
 
-    <div class="privacy">
-      <div class="privacy-icon">🔒</div>
-      <div>
-        <div class="privacy-title">Your privacy matters.</div>
-        <div class="privacy-desc">Tera only activates on shopping pages. We never track your browsing history or read sensitive information.</div>
-      </div>
-    </div>
-  </div>
+        progressSteps.forEach(function (stepButton) {
+          var target = stepButton.getAttribute('data-step-target');
+          stepButton.classList.remove('active');
+          stepButton.classList.remove('done');
 
-  <div class="cta-section">
-    <a href="tera://" class="btn-primary">Done — open Tera ↗</a>
-    <p class="cta-note">Already set up? Open the Tera app to sign in.</p>
-  </div>
+          if (step === 'activate' && target === 'activate') {
+            stepButton.classList.add('active');
+          }
 
-  <div class="already">
-    Don't have Tera yet? <a href="/#waitlist">Join the waitlist</a>
-  </div>
+          if (step === 'grant-access') {
+            if (target === 'activate') {
+              stepButton.classList.add('done');
+              stepButton.querySelector('.progress-badge').textContent = '✓';
+            } else {
+              stepButton.classList.add('active');
+              stepButton.querySelector('.progress-badge').textContent = '2';
+            }
+          } else {
+            stepButton.querySelector('.progress-badge').textContent = target === 'activate' ? '1' : '2';
+          }
+        });
 
+        var url = new URL(window.location.href);
+        url.searchParams.set('step', step);
+
+        if (replaceHistory) {
+          window.history.replaceState({}, '', url);
+        } else {
+          window.history.pushState({}, '', url);
+        }
+      }
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          var step = trigger.getAttribute('data-step-target');
+          if (!step) return;
+          setStep(step, false);
+        });
+      });
+
+      if (confirmAccessButton && confirmationNote) {
+        confirmAccessButton.addEventListener('click', function () {
+          confirmationNote.classList.add('show');
+          if (redirectNote) {
+            redirectNote.classList.add('show');
+          }
+          if (tutorialLink) {
+            tutorialLink.classList.add('show');
+          }
+          try {
+            window.localStorage.setItem('teraTutorialSetupComplete', 'true');
+          } catch (error) {
+            // Ignore storage failures in restricted browsers.
+          }
+          confirmAccessButton.textContent = 'Opening ASOS...';
+          confirmAccessButton.disabled = true;
+
+          if (tutorialLink && tutorialLink.href) {
+            window.setTimeout(function () {
+              window.location.href = tutorialLink.href;
+            }, 1400);
+          }
+        });
+      }
+
+      var requested = new URLSearchParams(window.location.search).get('step');
+      var initialStep = requested === 'grant-access' || requested === '2' ? 'grant-access' : 'activate';
+      setStep(initialStep, true);
+    })();
+  </script>
 </body>
 </html>
