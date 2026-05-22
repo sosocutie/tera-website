@@ -1051,15 +1051,15 @@
       }
 
       .device-shot {
-        width: min(100%, 44vw);
+        width: min(100%, 40vw);
       }
 
       .hero-device {
-        width: min(100%, 62vw);
+        width: min(100%, 58vw);
       }
 
       .story-showcase .device-shot {
-        width: min(100%, 45vw);
+        width: min(100%, 39vw);
       }
 
       .story-copy h1,
@@ -1091,14 +1091,15 @@
       }
 
       .story-showcase .phone-pair {
-        width: fit-content;
-        max-width: 100%;
+        width: 100%;
+        max-width: 320px;
         justify-content: center;
         margin: 0 auto;
+        gap: 12px;
       }
 
       .story-showcase .device-shot + .device-shot {
-        margin-left: -8vw;
+        margin-left: 0;
       }
 
       .story-showcase .story-copy p {
@@ -1125,10 +1126,11 @@
       }
 
       .waitlist-input {
+        flex: none;
         min-width: 100%;
         max-width: none;
-        height: 50px;
-        line-height: 50px;
+        height: 52px;
+        line-height: 52px;
         border-radius: 16px;
         font-size: 14px;
       }
@@ -1179,19 +1181,30 @@
       }
 
       .hero-device {
-        width: min(100%, 64vw);
+        width: min(100%, 56vw);
       }
 
       .story-showcase .device-shot {
-        width: min(100%, 46vw);
+        width: min(100%, 37vw);
       }
 
       .story-showcase .device-shot + .device-shot {
-        margin-left: -10vw;
+        margin-left: 0;
+      }
+
+      .story-showcase .phone-pair {
+        max-width: 290px;
+        gap: 10px;
       }
 
       .story-showcase-title {
         font-size: clamp(31px, 9.5vw, 38px);
+      }
+
+      .waitlist-input {
+        height: 50px;
+        line-height: 50px;
+        border-radius: 14px;
       }
     }
 
