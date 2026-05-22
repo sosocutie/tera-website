@@ -1099,10 +1099,19 @@
         gap: 12px;
         justify-items: center;
         align-items: end;
+        transform: translateX(8px);
       }
 
       .story-showcase .device-shot + .device-shot {
         margin-left: 0;
+      }
+
+      .story-showcase .device-shot.tilt-left {
+        transform: translateX(6px);
+      }
+
+      .story-showcase .device-shot.tilt-right {
+        transform: translateX(-4px);
       }
 
       .story-showcase .story-copy p {
@@ -1199,10 +1208,19 @@
       .story-showcase .phone-pair {
         width: min(100%, 276px);
         gap: 10px;
+        transform: translateX(6px);
       }
 
       .story-showcase-title {
         font-size: clamp(31px, 9.5vw, 38px);
+      }
+
+      .story-showcase .device-shot.tilt-left {
+        transform: translateX(5px);
+      }
+
+      .story-showcase .device-shot.tilt-right {
+        transform: translateX(-3px);
       }
 
       .waitlist-input {
