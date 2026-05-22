@@ -1051,7 +1051,7 @@
       }
 
       .device-shot {
-        width: min(100%, 40vw);
+        width: min(100%, 38vw);
       }
 
       .hero-device {
@@ -1059,7 +1059,8 @@
       }
 
       .story-showcase .device-shot {
-        width: min(100%, 39vw);
+        width: 100%;
+        max-width: 134px;
       }
 
       .story-copy h1,
@@ -1091,11 +1092,13 @@
       }
 
       .story-showcase .phone-pair {
-        width: 100%;
-        max-width: 320px;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: min(100%, 292px);
         margin: 0 auto;
         gap: 12px;
+        justify-items: center;
+        align-items: end;
       }
 
       .story-showcase .device-shot + .device-shot {
@@ -1185,7 +1188,8 @@
       }
 
       .story-showcase .device-shot {
-        width: min(100%, 37vw);
+        width: 100%;
+        max-width: 128px;
       }
 
       .story-showcase .device-shot + .device-shot {
@@ -1193,7 +1197,7 @@
       }
 
       .story-showcase .phone-pair {
-        max-width: 290px;
+        width: min(100%, 276px);
         gap: 10px;
       }
 
