@@ -26,37 +26,56 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      background: var(--panel);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
-      padding: 12px;
+      padding: 0;
     }
 
     a { color: inherit; }
 
     .site-shell {
       display: grid;
-      gap: 12px;
+      gap: 0;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 32px 14px;
+      background: rgba(255, 253, 251, 0.82);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-header::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: -22px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 253, 251, 0.92) 0%,
+        rgba(255, 253, 251, 0.82) 52%,
+        rgba(255, 253, 251, 0.32) 78%,
+        rgba(255, 253, 251, 0) 100%
+      );
+      pointer-events: none;
+      z-index: -1;
     }
 
     .story {
-      min-height: calc(100vh - 24px);
+      min-height: 100vh;
       background: var(--panel);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: var(--shadow);
       overflow: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
-    }
-
-    .story::after {
-      content: '';
-      position: absolute;
-      inset: auto 0 0;
-      height: 3px;
-      background: linear-gradient(90deg, #df7d5e 0%, #cb6550 100%);
-      opacity: 0.9;
     }
 
     .story-top,
@@ -70,16 +89,11 @@
       will-change: transform, opacity;
     }
 
-    .story-top {
-      transition-delay: 0.04s;
-    }
-
     .story-main,
     .story-showcase {
       transition-delay: 0.12s;
     }
 
-    .story.is-visible .story-top,
     .story.is-visible .story-main,
     .story.is-visible .story-showcase {
       opacity: 1;
@@ -87,29 +101,20 @@
     }
 
     .story-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 18px 20px 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-story .story-top {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 26px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(20, 18, 21, 0.08);
+      display: none;
     }
 
     .story-logo {
       width: 84px;
       display: block;
       flex-shrink: 0;
+    }
+
+    .site-header .story-logo {
+      position: absolute;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .story-nav {
@@ -122,11 +127,24 @@
       background: rgba(255,255,255,0.76);
     }
 
-    .hero-story .story-nav {
-      margin: 0;
-      position: static;
-      transform: none;
-      justify-self: center;
+    .site-header .story-nav {
+      position: relative;
+      isolation: isolate;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.52),
+        0 10px 28px rgba(255,255,255,0.55);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-header .story-nav::before {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.52);
+      filter: blur(14px);
+      z-index: -1;
+      opacity: 0.85;
     }
 
     .story-nav a {
@@ -161,7 +179,7 @@
     .hero-story .story-main {
       grid-template-columns: minmax(260px, 420px) minmax(380px, 1fr);
       gap: 48px;
-      padding-top: 52px;
+      padding-top: 40px;
       align-items: center;
     }
 
@@ -885,24 +903,23 @@
     }
 
     @media (max-width: 860px) {
-      .site-shell {
-        gap: 8px;
-      }
-
       .hero-story .story-top {
-        gap: 16px;
-        padding-bottom: 14px;
-        grid-template-columns: 1fr;
-        justify-items: center;
+        display: none;
       }
 
       .story {
         min-height: auto;
       }
 
-      .story-top {
-        flex-direction: column;
-        align-items: flex-start;
+      .site-header {
+        justify-content: center;
+        gap: 12px;
+        padding: 14px 14px 12px;
+      }
+
+      .site-header .story-logo {
+        position: static;
+        transform: none;
       }
 
       .story-nav {
@@ -928,7 +945,7 @@
       .hero-story .story-main {
         grid-template-columns: 1fr;
         gap: 30px;
-        padding-top: 28px;
+        padding-top: 24px;
       }
 
       .hero-story .phones {
@@ -999,25 +1016,8 @@
     }
 
     @media (max-width: 640px) {
-      body {
-        padding: 8px;
-      }
-
-      .site-shell {
-        gap: 8px;
-      }
-
-      .story-top {
-        padding: 14px 14px 0;
-      }
-
       .story-logo {
         width: 68px;
-      }
-
-      .hero-story .story-top {
-        gap: 12px;
-        align-items: center;
       }
 
       .story-nav {
@@ -1025,16 +1025,6 @@
         justify-content: center;
         gap: 12px;
         padding: 5px 8px;
-      }
-
-      .hero-story .story-nav {
-        width: 100%;
-        flex: 0 0 auto;
-        justify-content: center;
-        position: static;
-        left: auto;
-        top: auto;
-        transform: none;
       }
 
       .story-nav a {
@@ -1107,7 +1097,6 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .story-top,
       .story-main,
       .story-showcase {
         opacity: 1;
@@ -1118,19 +1107,18 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
+    <nav class="story-nav">
+      <a href="#top">Overview</a>
+      <a href="#brands">Features</a>
+      <a href="#browse">Extension</a>
+      <a href="#wishlist">Wishlist</a>
+      <a href="/get-extension" class="pill">Add to Safari</a>
+    </nav>
+  </header>
   <main class="site-shell">
     <section class="story hero-story" id="top">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="#wishlist">Wishlist</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-      </div>
-
       <div class="story-main">
         <div class="phones">
           <img class="device-shot hero-device small-tilt" src="assets/home-renders/recent-activity-phone.png" alt="Tera recent activity phone screen" />
@@ -1151,17 +1139,6 @@
     </section>
 
     <section class="story" id="brands">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-        <div style="width:64px;" aria-hidden="true"></div>
-      </div>
-
       <div class="story-showcase">
         <h2 class="story-showcase-title">Follow Brands you love</h2>
         <div class="phone-pair">
@@ -1176,17 +1153,6 @@
     </section>
 
     <section class="story" id="updates">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-        <div style="width:64px;" aria-hidden="true"></div>
-      </div>
-
       <div class="story-showcase">
         <h2 class="story-showcase-title">Get the updates you want.</h2>
         <div class="phone-pair">
@@ -1204,17 +1170,6 @@
     </section>
 
     <section class="story" id="browse">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-        <div style="width:64px;" aria-hidden="true"></div>
-      </div>
-
       <div class="story-showcase">
         <h2 class="story-showcase-title">One tap while you browse.</h2>
         <div class="phone-pair">
@@ -1232,17 +1187,6 @@
     </section>
 
     <section class="story" id="wishlist">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-        <div style="width:64px;" aria-hidden="true"></div>
-      </div>
-
       <div class="story-showcase">
         <h2 class="story-showcase-title">Sort your wishlist, smarter.</h2>
         <div class="phone-pair">
@@ -1257,24 +1201,10 @@
     </section>
 
     <section class="story final-panel" id="waitlist">
-      <div class="story-top">
-        <img class="story-logo" src="assets/tera-wordmark.png" alt="Tera" />
-        <nav class="story-nav">
-          <a href="#top">Overview</a>
-          <a href="#brands">Features</a>
-          <a href="#browse">Extension</a>
-          <a href="/get-extension" class="pill">Add to Safari</a>
-        </nav>
-        <div style="width:64px;" aria-hidden="true"></div>
-      </div>
-
       <div class="story-main">
         <div class="story-copy">
           <h2>Start using Tera your way.</h2>
           <p>Join the iOS waitlist, set up the Safari extension, and get your shopping life into one clean flow.</p>
-          <div class="action-row" style="justify-content:center;">
-            <a class="btn-secondary" href="/get-extension">Set up Safari extension</a>
-          </div>
           <form class="waitlist-form" id="waitlist-form">
             <input class="waitlist-input" type="text" name="firstName" placeholder="First name" autocomplete="given-name" required />
             <input class="waitlist-input" type="text" name="lastName" placeholder="Last name" autocomplete="family-name" required />
@@ -1292,7 +1222,7 @@
   </main>
   <script>
     const revealStories = document.querySelectorAll('.story');
-    const fadeTargets = document.querySelectorAll('.story-top, .story-main, .story-showcase');
+    const fadeTargets = document.querySelectorAll('.story-main, .story-showcase');
     const desktopMedia = window.matchMedia('(min-width: 861px)');
     const waitlistForm = document.getElementById('waitlist-form');
     const waitlistStatus = document.getElementById('waitlist-status');
@@ -1343,7 +1273,7 @@
         const opacity = 1 - (progress * 0.38);
         const shift = progress * 26;
 
-        const targets = story.querySelectorAll('.story-top, .story-main, .story-showcase');
+        const targets = story.querySelectorAll('.story-main, .story-showcase');
         targets.forEach((target) => {
           target.style.opacity = opacity.toFixed(3);
           target.style.transform = `translateY(${shift.toFixed(1)}px)`;
