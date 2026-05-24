@@ -859,6 +859,23 @@
       color: #b24f39;
     }
 
+    .waitlist-legal {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .waitlist-legal a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .waitlist-legal a:hover {
+      color: var(--accent-deep);
+    }
+
     .footer-row {
       width: 100%;
       margin-top: 18px;
@@ -880,6 +897,13 @@
 
     .footer-row a:hover {
       color: var(--ink);
+    }
+
+    .footer-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     @media (max-width: 1080px) {
@@ -1375,10 +1399,14 @@
             <input class="waitlist-input" type="email" name="email" placeholder="your@email.com" autocomplete="email" required />
             <button class="btn-primary" type="submit">Get early access</button>
           </form>
+          <p class="waitlist-legal">By joining, you agree to Tera's <a href="/terms">Terms &amp; Conditions</a> and <a href="/privacy">Privacy Policy</a>.</p>
           <p class="waitlist-status" id="waitlist-status" aria-live="polite"></p>
           <div class="footer-row">
             <span>© 2026 Tera Digital Inc.</span>
-            <a href="/privacy">Privacy Policy</a>
+            <div class="footer-links">
+              <a href="/terms">Terms &amp; Conditions</a>
+              <a href="/privacy">Privacy Policy</a>
+            </div>
           </div>
         </div>
       </div>
