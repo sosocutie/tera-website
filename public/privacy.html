@@ -39,11 +39,15 @@
     }
 
     .logo {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--terra);
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: 84px;
+      height: auto;
+      display: block;
     }
 
     .container {
@@ -186,7 +190,9 @@
 <body>
 
   <header>
-    <a class="logo" href="/">Tera</a>
+    <a class="logo" href="/" aria-label="Tera home">
+      <img src="assets/tera-wordmark.png" alt="Tera" />
+    </a>
   </header>
 
   <div class="container">
