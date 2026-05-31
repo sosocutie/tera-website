@@ -829,46 +829,32 @@
       return Array.from(groups.values()).sort((left, right) => right.items.length - left.items.length);
     };
 
-    const renderFollowedBrands = (items) => {
-      const groups = groupByUser(items);
-
-      followedList.innerHTML = groups.map((group) => `
+    const renderGroupedCollection = (container, emptyState, groups, renderItem, label) => {
+      container.innerHTML = groups.map((group) => `
         <article class="group-card">
           <div class="group-header">
             <div>
               <div class="group-title">${escapeHtml(group.email || 'No email')}</div>
               <div class="group-meta">${escapeHtml(group.uid || '-')}</div>
             </div>
-            <span class="badge">${escapeHtml(`${group.items.length} followed brand${group.items.length === 1 ? '' : 's'}`)}</span>
+            <span class="badge">${escapeHtml(`${group.items.length} ${label}${group.items.length === 1 ? '' : 's'}`)}</span>
           </div>
           <div class="group-items">
-            ${group.items.map((item) => `
-              <div class="group-row">
-                <div class="group-row-title">${escapeHtml(item.brandName || item.brandId || 'Unknown brand')}</div>
-                <div class="badge-row">
-                  ${item.salesEnabled ? '<span class="badge is-active">Sales</span>' : '<span class="badge is-muted">Sales off</span>'}
-                  ${item.allUpdatesEnabled ? '<span class="badge is-active">All updates</span>' : '<span class="badge is-muted">Limited updates</span>'}
-                </div>
-                <div class="group-row-copy">
-                  ${item.siteUrl ? `<a href="${escapeHtml(item.siteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.siteUrl)}</a>` : 'No site URL'}<br />
-                  Followed: ${escapeHtml(formatDate(item.subscribedAt))} · Updated: ${escapeHtml(formatDate(item.updatedAt))}
-                </div>
-              </div>
-            `).join('')}
+            ${group.items.map(renderItem).join('')}
           </div>
         </article>
       `).join('');
 
-      followedEmpty.classList.toggle('hidden', groups.length > 0);
+      emptyState.classList.toggle('hidden', groups.length > 0);
     };
 
     const renderData = (payload) => {
       const summary = payload.summary || {};
       const users = Array.isArray(payload.users) ? payload.users : [];
-      const recentFollowedBrands = Array.isArray(payload.recentFollowedBrands) ? payload.recentFollowedBrands : [];
+      const wishlistGroups = Array.isArray(payload.wishlistGroups) ? payload.wishlistGroups : [];
+      const followedBrandGroups = Array.isArray(payload.followedBrandGroups) ? payload.followedBrandGroups : [];
       const recentFeedback = Array.isArray(payload.recentFeedback) ? payload.recentFeedback : [];
-      const recentBrandRequests = Array.isArray(payload.recentBrandRequests) ? payload.recentBrandRequests : [];
-      const recentWishlistItems = Array.isArray(payload.recentWishlistItems) ? payload.recentWishlistItems : [];
+      const brandRequestGroups = Array.isArray(payload.brandRequestGroups) ? payload.brandRequestGroups : [];
 
       statUsers.textContent = String(summary.users || 0);
       statWishlist.textContent = String(summary.wishlistItems || 0);
@@ -877,7 +863,25 @@
       statRequests.textContent = String(summary.requestedBrands || 0);
 
       renderUsers(users);
-      renderFollowedBrands(recentFollowedBrands);
+      renderGroupedCollection(
+        followedList,
+        followedEmpty,
+        followedBrandGroups,
+        (item) => `
+          <div class="group-row">
+            <div class="group-row-title">${escapeHtml(item.brandName || item.brandId || 'Unknown brand')}</div>
+            <div class="badge-row">
+              ${item.salesEnabled ? '<span class="badge is-active">Sales</span>' : '<span class="badge is-muted">Sales off</span>'}
+              ${item.allUpdatesEnabled ? '<span class="badge is-active">All updates</span>' : '<span class="badge is-muted">Limited updates</span>'}
+            </div>
+            <div class="group-row-copy">
+              ${item.siteUrl ? `<a href="${escapeHtml(item.siteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.siteUrl)}</a>` : 'No site URL'}<br />
+              Followed: ${escapeHtml(formatDate(item.subscribedAt))} · Updated: ${escapeHtml(formatDate(item.updatedAt))}
+            </div>
+          </div>
+        `,
+        'followed brand'
+      );
 
       renderList(feedbackList, feedbackEmpty, recentFeedback, (item) => `
         <article class="list-item">
@@ -896,54 +900,47 @@
         </article>
       `);
 
-      const requestGroups = groupByUser(recentBrandRequests);
-
-      requestsList.innerHTML = requestGroups.map((group) => `
-        <article class="group-card">
-          <div class="group-header">
-            <div>
-              <div class="group-title">${escapeHtml(group.email || 'No email')}</div>
-              <div class="group-meta">${escapeHtml(group.uid || '-')}</div>
+      renderGroupedCollection(
+        requestsList,
+        requestsEmpty,
+        brandRequestGroups,
+        (item) => `
+          <div class="group-row">
+            <div class="group-row-title">${escapeHtml(item.brandName || item.siteHost || 'Requested brand')}</div>
+            <div class="badge-row">
+              ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
+              ${item.requestCount ? `<span class="badge">${escapeHtml(`${item.requestCount} request${item.requestCount === 1 ? '' : 's'}`)}</span>` : ''}
             </div>
-            <span class="badge">${escapeHtml(`${group.items.length} requested brand${group.items.length === 1 ? '' : 's'}`)}</span>
-          </div>
-          <div class="group-items">
-            ${group.items.map((item) => `
-              <div class="group-row">
-                <div class="group-row-title">${escapeHtml(item.brandName || item.siteHost || 'Requested brand')}</div>
-                <div class="badge-row">
-                  ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
-                  ${item.requestCount ? `<span class="badge">${escapeHtml(`${item.requestCount} request${item.requestCount === 1 ? '' : 's'}`)}</span>` : ''}
-                </div>
-                <div class="group-row-copy">
-                  ${escapeHtml(item.siteUrl || item.canonicalBrandId || 'No site URL')}<br />
-                  Last requested: ${escapeHtml(formatDate(item.lastRequestedAt || item.updatedAt || item.createdAt))}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </article>
-      `).join('');
-
-      requestsEmpty.classList.toggle('hidden', requestGroups.length > 0);
-
-      renderList(wishlistList, wishlistEmpty, recentWishlistItems, (item) => `
-        <article class="list-item">
-          <div class="list-item-header">
-            <div>
-              <div class="list-item-title">${escapeHtml(item.name || 'Saved item')}</div>
-              <div class="meta">Saved by: ${escapeHtml(item.email || 'No email')}</div>
-              <div class="meta">${escapeHtml(item.uid || '-')} · ${escapeHtml(item.brand || 'Unknown brand')}</div>
+            <div class="group-row-copy">
+              ${escapeHtml(item.siteUrl || item.canonicalBrandId || 'No site URL')}<br />
+              Last requested: ${escapeHtml(formatDate(item.lastRequestedAt || item.updatedAt || item.createdAt))}
             </div>
+          </div>
+        `,
+        'requested brand'
+      );
+
+      renderGroupedCollection(
+        wishlistList,
+        wishlistEmpty,
+        wishlistGroups,
+        (item) => `
+          <div class="group-row">
+            <div class="group-row-title">${escapeHtml(item.name || 'Saved item')}</div>
             <div class="badge-row">
               ${item.currentPrice ? `<span class="badge">${escapeHtml(formatPrice(item.currentPrice))}</span>` : ''}
               ${item.selectedSize ? `<span class="badge">${escapeHtml(item.selectedSize)}</span>` : ''}
               ${item.isBought ? '<span class="badge is-active">Bought</span>' : ''}
             </div>
+            <div class="group-row-copy">
+              ${escapeHtml(item.brand || 'Unknown brand')} · ${escapeHtml(item.uid || '-')}<br />
+              ${escapeHtml(item.productUrl || 'No product URL')}<br />
+              Saved: ${escapeHtml(formatDate(item.savedAt || item.updatedAt || item.createdAt))}
+            </div>
           </div>
-          <p class="list-item-copy">${escapeHtml(item.productUrl || '')}</p>
-        </article>
-      `);
+        `,
+        'wishlist item'
+      );
     };
 
     statTabs.forEach((button) => {
