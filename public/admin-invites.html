@@ -467,7 +467,7 @@
               <div class="field-wrap">
                 <label class="field-label" for="emails-input">Emails</label>
                 <textarea class="textarea" id="emails-input" placeholder="Paste one email per line or comma-separated emails"></textarea>
-                <div class="meta">One email per line works best. Comma-separated paste is also supported.</div>
+                <div class="meta">One email per line works best. Comma-separated paste is also supported, and CSV uploads will merge here automatically.</div>
               </div>
 
               <div class="field-wrap">
@@ -501,6 +501,12 @@
               </div>
 
               <div class="pill-row hidden" id="invalid-preview"></div>
+
+              <div class="field-wrap">
+                <label class="field-label" for="final-preview">Final send list</label>
+                <textarea class="textarea" id="final-preview" readonly placeholder="Your final merged send list will appear here"></textarea>
+                <div class="meta">This is the deduped valid list that will actually be sent to the backend.</div>
+              </div>
 
               <div class="actions">
                 <button class="btn btn-primary" id="send-button" type="button">Send Invites</button>
@@ -616,6 +622,7 @@
     const statInvalid = document.getElementById('stat-invalid');
     const statUnique = document.getElementById('stat-unique');
     const invalidPreview = document.getElementById('invalid-preview');
+    const finalPreview = document.getElementById('final-preview');
 
     const summarySent = document.getElementById('summary-sent');
     const summaryResent = document.getElementById('summary-resent');
@@ -638,7 +645,6 @@
 
     let firebaseUser = null;
     let lastResults = [];
-    let csvEmails = [];
 
     const setStatus = (element, message, tone = '') => {
       element.textContent = message;
@@ -679,11 +685,18 @@
         .filter(Boolean);
     };
 
+    const mergeEmailsIntoTextarea = (newEmails) => {
+      const existing = parseEmailsFromText(emailsInput.value);
+      const merged = Array.from(new Set([...existing, ...newEmails.map((email) => String(email || '').trim().toLowerCase())]
+        .filter(Boolean)));
+
+      emailsInput.value = merged.join(',\n');
+    };
+
     const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
 
     const getParsedEmails = () => {
-      const pasted = parseEmailsFromText(emailsInput.value);
-      const all = [...pasted, ...csvEmails].map((email) => email.toLowerCase());
+      const all = parseEmailsFromText(emailsInput.value).map((email) => email.toLowerCase());
       const unique = Array.from(new Set(all));
       const valid = unique.filter(isValidEmail);
       const invalid = unique.filter((email) => !isValidEmail(email));
@@ -702,6 +715,7 @@
       statValid.textContent = String(parsed.valid.length);
       statInvalid.textContent = String(parsed.invalid.length);
       statUnique.textContent = String(parsed.unique);
+      finalPreview.value = parsed.valid.join(',\n');
 
       if (parsed.invalid.length) {
         invalidPreview.classList.remove('hidden');
@@ -944,18 +958,17 @@
       const file = csvInput.files && csvInput.files[0];
 
       if (!file) {
-        csvEmails = [];
         updatePreview();
         return;
       }
 
       try {
         const text = await file.text();
-        csvEmails = parseEmailsFromText(text);
+        const extracted = parseEmailsFromText(text);
+        mergeEmailsIntoTextarea(extracted);
         updatePreview();
-        setStatus(sendStatus, `Loaded ${csvEmails.length} email values from CSV.`, 'success');
+        setStatus(sendStatus, `Merged ${extracted.length} email values from CSV into the send box.`, 'success');
       } catch (error) {
-        csvEmails = [];
         updatePreview();
         setStatus(sendStatus, error.message || 'Unable to read CSV file.', 'error');
       }
