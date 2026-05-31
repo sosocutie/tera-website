@@ -403,6 +403,10 @@
       gap: 10px;
     }
 
+    .group-items.is-extra {
+      margin-top: 10px;
+    }
+
     .group-row {
       padding: 12px 14px;
       border: 1px solid var(--line);
@@ -422,6 +426,37 @@
       line-height: 1.5;
       margin-top: 6px;
       word-break: break-word;
+    }
+
+    .group-more {
+      margin-top: 10px;
+    }
+
+    .group-more summary {
+      list-style: none;
+      cursor: pointer;
+      color: var(--clay-deep);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .group-more summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .group-more summary::before {
+      content: '▸';
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 140ms ease;
+    }
+
+    .group-more[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .group-more summary:hover {
+      text-decoration: underline;
     }
 
     .empty {
@@ -809,26 +844,6 @@
       emptyState.classList.toggle('hidden', items.length > 0);
     };
 
-    const groupByUser = (items) => {
-      const groups = new Map();
-
-      items.forEach((item) => {
-        const key = item.uid || item.email || item.id;
-
-        if (!groups.has(key)) {
-          groups.set(key, {
-            uid: item.uid || '',
-            email: item.email || '',
-            items: []
-          });
-        }
-
-        groups.get(key).items.push(item);
-      });
-
-      return Array.from(groups.values()).sort((left, right) => right.items.length - left.items.length);
-    };
-
     const renderGroupedCollection = (container, emptyState, groups, renderItem, label) => {
       container.innerHTML = groups.map((group) => `
         <article class="group-card">
@@ -836,12 +851,21 @@
             <div>
               <div class="group-title">${escapeHtml(group.email || 'No email')}</div>
               <div class="group-meta">${escapeHtml(group.uid || '-')}</div>
+              <div class="group-meta">Latest activity: ${escapeHtml(formatDate(group.latestActivityAt))}</div>
             </div>
             <span class="badge">${escapeHtml(`${group.items.length} ${label}${group.items.length === 1 ? '' : 's'}`)}</span>
           </div>
           <div class="group-items">
-            ${group.items.map(renderItem).join('')}
+            ${group.items.slice(0, 5).map((item) => renderItem(item, group)).join('')}
           </div>
+          ${group.items.length > 5 ? `
+            <details class="group-more">
+              <summary>Show ${group.items.length - 5} more</summary>
+              <div class="group-items is-extra">
+                ${group.items.slice(5).map((item) => renderItem(item, group)).join('')}
+              </div>
+            </details>
+          ` : ''}
         </article>
       `).join('');
 
@@ -933,6 +957,7 @@
               ${item.isBought ? '<span class="badge is-active">Bought</span>' : ''}
             </div>
             <div class="group-row-copy">
+              Saved by: ${escapeHtml(item.email || group.email || 'No email')}<br />
               ${escapeHtml(item.brand || 'Unknown brand')} · ${escapeHtml(item.uid || '-')}<br />
               ${escapeHtml(item.productUrl || 'No product URL')}<br />
               Saved: ${escapeHtml(formatDate(item.savedAt || item.updatedAt || item.createdAt))}

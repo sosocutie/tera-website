@@ -15,10 +15,14 @@ function timestampToIso(value) {
   return millis ? new Date(millis).toISOString() : null;
 }
 
+function getTimestampFromKeys(item, keys) {
+  return keys.reduce((found, key) => found || timestampToMillis(item[key]), 0);
+}
+
 function sortByTimestamp(items, keys) {
   return [...items].sort((left, right) => {
-    const leftValue = keys.reduce((found, key) => found || timestampToMillis(left[key]), 0);
-    const rightValue = keys.reduce((found, key) => found || timestampToMillis(right[key]), 0);
+    const leftValue = getTimestampFromKeys(left, keys);
+    const rightValue = getTimestampFromKeys(right, keys);
     return rightValue - leftValue;
   });
 }
@@ -107,11 +111,21 @@ function mapFeedback(doc) {
 }
 
 function buildUserGroup(user, items, keys) {
+  const sortedItems = sortByTimestamp(items, keys);
+  const latestActivityMillis = sortedItems.length ? getTimestampFromKeys(sortedItems[0], keys) : 0;
+
   return {
     uid: user.uid,
     email: user.email,
-    items: sortByTimestamp(items, keys)
+    latestActivityAt: latestActivityMillis ? new Date(latestActivityMillis).toISOString() : null,
+    items: sortedItems
   };
+}
+
+function sortUserGroups(groups) {
+  return [...groups].sort((left, right) => {
+    return timestampToMillis(right.latestActivityAt) - timestampToMillis(left.latestActivityAt);
+  });
 }
 
 async function getUserAdminRecord(userDoc) {
@@ -193,18 +207,9 @@ module.exports = async (req, res) => {
     const userRecords = await Promise.all(usersSnap.docs.map(getUserAdminRecord));
     const users = sortByTimestamp(userRecords, ['createdAt']);
 
-    const wishlistGroups = users
+    const wishlistGroups = sortUserGroups(users
       .filter((user) => user._wishlistItems.length > 0)
-      .map((user) => buildUserGroup(user, user._wishlistItems, ['updatedAt', 'savedAt', 'createdAt']));
-
-    const recentWishlistItems = sortByTimestamp(
-      users.flatMap((user) => user._wishlistItems.map((item) => ({
-        ...item,
-        uid: user.uid,
-        email: user.email
-      }))),
-      ['updatedAt', 'savedAt', 'createdAt']
-    ).slice(0, 25);
+      .map((user) => buildUserGroup(user, user._wishlistItems, ['updatedAt', 'savedAt', 'createdAt'])));
 
     const recentFeedback = sortByTimestamp(
       users.flatMap((user) => user._feedback.map((item) => ({
@@ -215,13 +220,13 @@ module.exports = async (req, res) => {
       ['createdAt']
     ).slice(0, 25);
 
-    const followedBrandGroups = users
+    const followedBrandGroups = sortUserGroups(users
       .filter((user) => user._followedBrands.length > 0)
-      .map((user) => buildUserGroup(user, user._followedBrands, ['updatedAt', 'subscribedAt']));
+      .map((user) => buildUserGroup(user, user._followedBrands, ['updatedAt', 'subscribedAt'])));
 
-    const brandRequestGroups = users
+    const brandRequestGroups = sortUserGroups(users
       .filter((user) => user._requestedBrands.length > 0)
-      .map((user) => buildUserGroup(user, user._requestedBrands, ['lastRequestedAt', 'updatedAt', 'createdAt']));
+      .map((user) => buildUserGroup(user, user._requestedBrands, ['lastRequestedAt', 'updatedAt', 'createdAt'])));
 
     const payloadUsers = users.map((user) => ({
       uid: user.uid,
@@ -254,7 +259,6 @@ module.exports = async (req, res) => {
       summary,
       users: payloadUsers,
       wishlistGroups,
-      recentWishlistItems,
       followedBrandGroups,
       recentFeedback,
       brandRequestGroups
