@@ -211,10 +211,24 @@
     }
 
     .stat {
-      padding: 18px;
+      appearance: none;
       border: 1px solid var(--line);
+      padding: 18px;
       border-radius: 18px;
       background: linear-gradient(180deg, rgba(246, 239, 232, 0.72), rgba(255, 255, 255, 0.94));
+      text-align: left;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+
+    .stat:hover {
+      transform: translateY(-1px);
+    }
+
+    .stat.is-active {
+      border-color: rgba(200, 102, 74, 0.45);
+      background: linear-gradient(180deg, rgba(200, 102, 74, 0.16), rgba(255, 255, 255, 0.96));
+      box-shadow: 0 14px 32px rgba(200, 102, 74, 0.1);
     }
 
     .stat-label {
@@ -232,22 +246,17 @@
       letter-spacing: -0.04em;
     }
 
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .stack {
-      display: grid;
-      gap: 18px;
-    }
-
     .section-title {
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 14px;
+    }
+
+    .section-copy {
+      color: var(--ink-soft);
+      margin-bottom: 16px;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
     .table-wrap {
@@ -377,10 +386,31 @@
       line-height: 1.5;
     }
 
-    @media (max-width: 1100px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
+    .tab-panels {
+      display: grid;
+      gap: 18px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.is-active {
+      display: block;
+    }
+
+    .panel-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .compact-table table {
+      min-width: 820px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
     }
 
     @media (max-width: 720px) {
@@ -444,35 +474,36 @@
         <p class="status" id="dashboard-status" aria-live="polite"></p>
 
         <div class="stats">
-          <article class="stat">
+          <button class="stat" type="button" data-tab="users">
             <span class="stat-label">Users</span>
             <strong class="stat-value" id="stat-users">0</strong>
-          </article>
-          <article class="stat">
+          </button>
+          <button class="stat" type="button" data-tab="wishlist">
             <span class="stat-label">Wishlist Items</span>
             <strong class="stat-value" id="stat-wishlist">0</strong>
-          </article>
-          <article class="stat">
+          </button>
+          <button class="stat" type="button" data-tab="followed">
             <span class="stat-label">Followed Brands</span>
             <strong class="stat-value" id="stat-follows">0</strong>
-          </article>
-          <article class="stat">
+          </button>
+          <button class="stat" type="button" data-tab="feedback">
             <span class="stat-label">Feedback</span>
             <strong class="stat-value" id="stat-feedback">0</strong>
-          </article>
-          <article class="stat">
+          </button>
+          <button class="stat" type="button" data-tab="requests">
             <span class="stat-label">Brand Requests</span>
             <strong class="stat-value" id="stat-requests">0</strong>
-          </article>
+          </button>
         </div>
 
         <p class="note">There is no stored user name yet in Firestore, so this view uses email plus uid.</p>
       </section>
 
-      <section class="dashboard-grid hidden" id="data-grid">
-        <div class="stack">
-          <section class="card">
+      <section class="tab-panels hidden" id="data-grid">
+        <section class="card tab-panel is-active" id="panel-users" data-panel="users">
+          <div class="panel-grid">
             <h2 class="section-title">Users</h2>
+            <p class="section-copy">A high-level view of each account with saved-item, follow, request, and feedback counts plus a quick preview of each user’s data.</p>
             <div class="table-wrap">
               <table>
                 <thead>
@@ -490,28 +521,66 @@
               </table>
             </div>
             <div class="empty hidden" id="users-empty">No users found.</div>
-          </section>
-        </div>
+          </div>
+        </section>
 
-        <div class="stack">
-          <section class="card">
+        <section class="card tab-panel" id="panel-wishlist" data-panel="wishlist">
+          <div class="stack">
+            <div>
+              <h2 class="section-title">Wishlist Items</h2>
+              <p class="section-copy">Recent saved products across all users, including the user email, brand, price, size, and saved product link.</p>
+            </div>
+            <div class="list" id="wishlist-list"></div>
+            <div class="empty hidden" id="wishlist-empty">No wishlist items found.</div>
+          </div>
+        </section>
+
+        <section class="card tab-panel" id="panel-followed" data-panel="followed">
+          <div class="stack">
+            <div>
+              <h2 class="section-title">Followed Brands</h2>
+              <p class="section-copy">Recent brand follows across all users, with notification settings and source links where available.</p>
+            </div>
+            <div class="table-wrap compact-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Brand</th>
+                    <th>Site</th>
+                    <th>Subscription</th>
+                    <th>Updated</th>
+                  </tr>
+                </thead>
+                <tbody id="followed-body"></tbody>
+              </table>
+            </div>
+            <div class="empty hidden" id="followed-empty">No followed brands found.</div>
+          </div>
+        </section>
+
+        <section class="card tab-panel" id="panel-feedback" data-panel="feedback">
+          <div class="stack">
+            <div>
+              <h2 class="section-title">Feedback</h2>
+              <p class="section-copy">Recent user feedback submitted from the app, including the message, platform, screen, and status.</p>
+            </div>
             <h2 class="section-title">Recent Feedback</h2>
             <div class="list" id="feedback-list"></div>
             <div class="empty hidden" id="feedback-empty">No feedback found.</div>
-          </section>
+          </div>
+        </section>
 
-          <section class="card">
-            <h2 class="section-title">Recent Brand Requests</h2>
+        <section class="card tab-panel" id="panel-requests" data-panel="requests">
+          <div class="stack">
+            <div>
+              <h2 class="section-title">Brand Requests</h2>
+              <p class="section-copy">Requested brands users tried to add to the app, with request counts, status, and target site details.</p>
+            </div>
             <div class="list" id="requests-list"></div>
             <div class="empty hidden" id="requests-empty">No brand requests found.</div>
-          </section>
-
-          <section class="card">
-            <h2 class="section-title">Recent Wishlist Saves</h2>
-            <div class="list" id="wishlist-list"></div>
-            <div class="empty hidden" id="wishlist-empty">No wishlist items found.</div>
-          </section>
-        </div>
+          </div>
+        </section>
       </section>
     </section>
   </main>
@@ -534,6 +603,10 @@
     const requestsEmpty = document.getElementById('requests-empty');
     const wishlistList = document.getElementById('wishlist-list');
     const wishlistEmpty = document.getElementById('wishlist-empty');
+    const followedBody = document.getElementById('followed-body');
+    const followedEmpty = document.getElementById('followed-empty');
+    const statTabs = Array.from(document.querySelectorAll('[data-tab]'));
+    const tabPanels = Array.from(document.querySelectorAll('[data-panel]'));
 
     const statUsers = document.getElementById('stat-users');
     const statWishlist = document.getElementById('stat-wishlist');
@@ -585,6 +658,16 @@
       dataGrid.classList.remove('hidden');
     };
 
+    const setActiveTab = (tabName) => {
+      statTabs.forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.tab === tabName);
+      });
+
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.dataset.panel === tabName);
+      });
+    };
+
     const renderBadges = (items, mapper, fallback = 'None yet') => {
       if (!items.length) {
         return `<span class="badge is-muted">${escapeHtml(fallback)}</span>`;
@@ -603,10 +686,13 @@
       feedbackList.innerHTML = '';
       requestsList.innerHTML = '';
       wishlistList.innerHTML = '';
+      followedBody.innerHTML = '';
       usersEmpty.classList.remove('hidden');
       feedbackEmpty.classList.remove('hidden');
       requestsEmpty.classList.remove('hidden');
       wishlistEmpty.classList.remove('hidden');
+      followedEmpty.classList.remove('hidden');
+      setActiveTab('users');
     };
 
     const renderUsers = (users) => {
@@ -682,9 +768,38 @@
       emptyState.classList.toggle('hidden', items.length > 0);
     };
 
+    const renderFollowedBrands = (items) => {
+      followedBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>
+            <div class="strong">${escapeHtml(item.email || 'No email')}</div>
+            <div class="meta">${escapeHtml(item.uid || '-')}</div>
+          </td>
+          <td>
+            <div class="strong">${escapeHtml(item.brandName || item.brandId || 'Unknown brand')}</div>
+            <div class="meta">${escapeHtml(item.brandId || '-')}</div>
+          </td>
+          <td>
+            ${item.siteUrl ? `<a class="meta" href="${escapeHtml(item.siteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.siteUrl)}</a>` : '<span class="meta">-</span>'}
+          </td>
+          <td>
+            <div class="badge-row">
+              ${item.salesEnabled ? '<span class="badge is-active">Sales</span>' : '<span class="badge is-muted">Sales off</span>'}
+              ${item.allUpdatesEnabled ? '<span class="badge is-active">All updates</span>' : '<span class="badge is-muted">Limited updates</span>'}
+            </div>
+            <div class="meta">${escapeHtml(formatDate(item.subscribedAt))}</div>
+          </td>
+          <td>${escapeHtml(formatDate(item.updatedAt))}</td>
+        </tr>
+      `).join('');
+
+      followedEmpty.classList.toggle('hidden', items.length > 0);
+    };
+
     const renderData = (payload) => {
       const summary = payload.summary || {};
       const users = Array.isArray(payload.users) ? payload.users : [];
+      const recentFollowedBrands = Array.isArray(payload.recentFollowedBrands) ? payload.recentFollowedBrands : [];
       const recentFeedback = Array.isArray(payload.recentFeedback) ? payload.recentFeedback : [];
       const recentBrandRequests = Array.isArray(payload.recentBrandRequests) ? payload.recentBrandRequests : [];
       const recentWishlistItems = Array.isArray(payload.recentWishlistItems) ? payload.recentWishlistItems : [];
@@ -696,6 +811,7 @@
       statRequests.textContent = String(summary.requestedBrands || 0);
 
       renderUsers(users);
+      renderFollowedBrands(recentFollowedBrands);
 
       renderList(feedbackList, feedbackEmpty, recentFeedback, (item) => `
         <article class="list-item">
@@ -747,6 +863,12 @@
         </article>
       `);
     };
+
+    statTabs.forEach((button) => {
+      button.addEventListener('click', () => {
+        setActiveTab(button.dataset.tab);
+      });
+    });
 
     const loadData = async () => {
       setStatus(dashboardStatus, 'Loading Firestore admin data...');
