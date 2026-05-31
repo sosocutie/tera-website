@@ -203,6 +203,15 @@ module.exports = async (req, res) => {
       ['createdAt']
     ).slice(0, 25);
 
+    const recentFollowedBrands = sortByTimestamp(
+      users.flatMap((user) => user._followedBrands.map((item) => ({
+        ...item,
+        uid: user.uid,
+        email: user.email
+      }))),
+      ['updatedAt', 'subscribedAt']
+    ).slice(0, 50);
+
     const recentBrandRequests = sortByTimestamp(
       users.flatMap((user) => user._requestedBrands.map((item) => ({
         ...item,
@@ -243,6 +252,7 @@ module.exports = async (req, res) => {
       summary,
       users: payloadUsers,
       recentWishlistItems,
+      recentFollowedBrands,
       recentFeedback,
       recentBrandRequests
     });
