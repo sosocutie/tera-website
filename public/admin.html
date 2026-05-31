@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tera Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --clay: #c8664a;
+      --clay-deep: #a84d34;
+      --sand: #f6efe8;
+      --paper: #fffdfa;
+      --paper-strong: #ffffff;
+      --ink: #1d1713;
+      --ink-soft: #655b54;
+      --line: #e7dbd2;
+      --success: #2f6f53;
+      --danger: #a63d35;
+      --shadow: 0 28px 70px rgba(60, 36, 21, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Instrument Sans', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(200, 102, 74, 0.18), transparent 34%),
+        linear-gradient(180deg, #fbf7f2 0%, #f3ebe3 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(1240px, calc(100vw - 24px));
+      margin: 12px auto;
+      background: rgba(255, 253, 250, 0.88);
+      border: 1px solid rgba(231, 219, 210, 0.96);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand img {
+      width: 82px;
+      height: auto;
+      display: block;
+    }
+
+    .page {
+      padding: 28px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .card-copy {
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+      max-width: 420px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    .field {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .field:focus {
+      outline: none;
+      border-color: rgba(200, 102, 74, 0.65);
+      box-shadow: 0 0 0 4px rgba(200, 102, 74, 0.12);
+    }
+
+    .toolbar,
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 140ms ease, opacity 140ms ease, background 140ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: var(--clay);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--clay-deep);
+    }
+
+    .btn-secondary {
+      background: #efe2d7;
+      color: var(--ink);
+    }
+
+    .status {
+      min-height: 20px;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(246, 239, 232, 0.72), rgba(255, 255, 255, 0.94));
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--paper-strong);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #faf4ef;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      z-index: 1;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .meta {
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .strong {
+      font-weight: 600;
+    }
+
+    .badge-row,
+    .preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f3e8de;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .badge.is-active {
+      background: rgba(47, 111, 83, 0.12);
+      color: var(--success);
+    }
+
+    .badge.is-muted {
+      background: #f4f0ec;
+      color: var(--ink-soft);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .list-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.84);
+    }
+
+    .list-item-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .list-item-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .list-item-copy {
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty {
+      padding: 22px;
+      text-align: center;
+      color: var(--ink-soft);
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 14px, 100%);
+        margin: 7px auto;
+        border-radius: 22px;
+      }
+
+      .masthead,
+      .page,
+      .card {
+        padding: 18px;
+      }
+
+      .title {
+        font-size: 30px;
+      }
+
+      table {
+        min-width: 860px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="Tera home">
+        <img src="/assets/tera-wordmark.png" alt="Tera" />
+      </a>
+    </header>
+
+    <section class="page">
+      <div>
+        <p class="eyebrow">Internal</p>
+        <h1 class="title">Admin view for live Firestore data.</h1>
+        <p class="subtitle">This reads directly from the Firebase Admin SDK on the server. It is intentionally simple: users, follows, wishlist items, feedback, and requested brands in one place.</p>
+      </div>
+
+      <section class="card" id="login-card">
+        <h2 class="card-title">Admin sign in</h2>
+        <p class="card-copy">Use the server-side admin password from Vercel. Firebase credentials stay on the backend only.</p>
+        <form class="login-form" id="login-form">
+          <div>
+            <label class="field-label" for="password">Password</label>
+          </div>
+          <input class="field" id="password" name="password" type="password" autocomplete="current-password" required />
+          <div class="actions">
+            <button class="btn btn-primary" id="login-button" type="submit">Unlock admin</button>
+          </div>
+          <p class="status" id="login-status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card hidden" id="dashboard-card">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="refresh-button" type="button">Refresh</button>
+          <button class="btn btn-secondary" id="logout-button" type="button">Log out</button>
+        </div>
+        <p class="status" id="dashboard-status" aria-live="polite"></p>
+
+        <div class="stats">
+          <article class="stat">
+            <span class="stat-label">Users</span>
+            <strong class="stat-value" id="stat-users">0</strong>
+          </article>
+          <article class="stat">
+            <span class="stat-label">Wishlist Items</span>
+            <strong class="stat-value" id="stat-wishlist">0</strong>
+          </article>
+          <article class="stat">
+            <span class="stat-label">Followed Brands</span>
+            <strong class="stat-value" id="stat-follows">0</strong>
+          </article>
+          <article class="stat">
+            <span class="stat-label">Feedback</span>
+            <strong class="stat-value" id="stat-feedback">0</strong>
+          </article>
+          <article class="stat">
+            <span class="stat-label">Brand Requests</span>
+            <strong class="stat-value" id="stat-requests">0</strong>
+          </article>
+        </div>
+
+        <p class="note">There is no stored user name yet in Firestore, so this view uses email plus uid.</p>
+      </section>
+
+      <section class="dashboard-grid hidden" id="data-grid">
+        <div class="stack">
+          <section class="card">
+            <h2 class="section-title">Users</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Created</th>
+                    <th>Counts</th>
+                    <th>Followed Brands</th>
+                    <th>Saved Items</th>
+                    <th>Requests / Feedback</th>
+                    <th>Notifications</th>
+                  </tr>
+                </thead>
+                <tbody id="users-body"></tbody>
+              </table>
+            </div>
+            <div class="empty hidden" id="users-empty">No users found.</div>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section class="card">
+            <h2 class="section-title">Recent Feedback</h2>
+            <div class="list" id="feedback-list"></div>
+            <div class="empty hidden" id="feedback-empty">No feedback found.</div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">Recent Brand Requests</h2>
+            <div class="list" id="requests-list"></div>
+            <div class="empty hidden" id="requests-empty">No brand requests found.</div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title">Recent Wishlist Saves</h2>
+            <div class="list" id="wishlist-list"></div>
+            <div class="empty hidden" id="wishlist-empty">No wishlist items found.</div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const loginCard = document.getElementById('login-card');
+    const dashboardCard = document.getElementById('dashboard-card');
+    const dataGrid = document.getElementById('data-grid');
+    const loginForm = document.getElementById('login-form');
+    const loginButton = document.getElementById('login-button');
+    const refreshButton = document.getElementById('refresh-button');
+    const logoutButton = document.getElementById('logout-button');
+    const loginStatus = document.getElementById('login-status');
+    const dashboardStatus = document.getElementById('dashboard-status');
+    const usersBody = document.getElementById('users-body');
+    const usersEmpty = document.getElementById('users-empty');
+    const feedbackList = document.getElementById('feedback-list');
+    const feedbackEmpty = document.getElementById('feedback-empty');
+    const requestsList = document.getElementById('requests-list');
+    const requestsEmpty = document.getElementById('requests-empty');
+    const wishlistList = document.getElementById('wishlist-list');
+    const wishlistEmpty = document.getElementById('wishlist-empty');
+
+    const statUsers = document.getElementById('stat-users');
+    const statWishlist = document.getElementById('stat-wishlist');
+    const statFollows = document.getElementById('stat-follows');
+    const statFeedback = document.getElementById('stat-feedback');
+    const statRequests = document.getElementById('stat-requests');
+
+    const setStatus = (element, message, tone = '') => {
+      element.textContent = message;
+      element.className = 'status';
+      if (tone) {
+        element.classList.add(tone);
+      }
+    };
+
+    const escapeHtml = (value) => String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+    const formatDate = (value) => {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+
+      return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(date);
+    };
+
+    const formatPrice = (value) => {
+      if (value === null || value === undefined || value === '') return '';
+      if (typeof value === 'number') return `$${value}`;
+      return String(value);
+    };
+
+    const showLogin = () => {
+      loginCard.classList.remove('hidden');
+      dashboardCard.classList.add('hidden');
+      dataGrid.classList.add('hidden');
+    };
+
+    const showDashboard = () => {
+      loginCard.classList.add('hidden');
+      dashboardCard.classList.remove('hidden');
+      dataGrid.classList.remove('hidden');
+    };
+
+    const renderBadges = (items, mapper, fallback = 'None yet') => {
+      if (!items.length) {
+        return `<span class="badge is-muted">${escapeHtml(fallback)}</span>`;
+      }
+
+      return items.map((item) => `<span class="badge">${mapper(item)}</span>`).join('');
+    };
+
+    const clearData = () => {
+      statUsers.textContent = '0';
+      statWishlist.textContent = '0';
+      statFollows.textContent = '0';
+      statFeedback.textContent = '0';
+      statRequests.textContent = '0';
+      usersBody.innerHTML = '';
+      feedbackList.innerHTML = '';
+      requestsList.innerHTML = '';
+      wishlistList.innerHTML = '';
+      usersEmpty.classList.remove('hidden');
+      feedbackEmpty.classList.remove('hidden');
+      requestsEmpty.classList.remove('hidden');
+      wishlistEmpty.classList.remove('hidden');
+    };
+
+    const renderUsers = (users) => {
+      usersBody.innerHTML = users.map((user) => {
+        const notificationBadges = [];
+
+        if (user.pushNotifications?.enabled) {
+          notificationBadges.push('<span class="badge is-active">Push enabled</span>');
+        } else {
+          notificationBadges.push('<span class="badge is-muted">Push off</span>');
+        }
+
+        if (user.pushNotifications?.platform) {
+          notificationBadges.push(`<span class="badge">${escapeHtml(user.pushNotifications.platform)}</span>`);
+        }
+
+        if (user.pushNotifications?.permissionStatus) {
+          notificationBadges.push(`<span class="badge">${escapeHtml(user.pushNotifications.permissionStatus)}</span>`);
+        }
+
+        if (user.inviteGateRequired) {
+          notificationBadges.push('<span class="badge">Invite gated</span>');
+        }
+
+        return `
+          <tr>
+            <td>
+              <div class="strong">${escapeHtml(user.email || 'No email')}</div>
+              <div class="meta">${escapeHtml(user.uid || '-')}</div>
+            </td>
+            <td>${escapeHtml(formatDate(user.createdAt))}</td>
+            <td>
+              <div class="meta">Wishlist: ${user.counts.wishlistItems}</div>
+              <div class="meta">Follows: ${user.counts.followedBrands}</div>
+              <div class="meta">Feedback: ${user.counts.feedback}</div>
+              <div class="meta">Requests: ${user.counts.requestedBrands}</div>
+            </td>
+            <td>
+              <div class="preview-list">${renderBadges(
+                user.previews.followedBrands || [],
+                (brand) => escapeHtml(brand.brandName || brand.brandId || 'Brand')
+              )}</div>
+            </td>
+            <td>
+              <div class="preview-list">${renderBadges(
+                user.previews.wishlistItems || [],
+                (item) => escapeHtml(item.name || item.productUrl || 'Item')
+              )}</div>
+            </td>
+            <td>
+              <div class="preview-list">${renderBadges(
+                user.previews.requestedBrands || [],
+                (item) => escapeHtml(item.brandName || item.siteHost || 'Request')
+              )}</div>
+              <div class="preview-list">${renderBadges(
+                user.previews.feedback || [],
+                (item) => escapeHtml(item.screenLabel || item.platform || 'Feedback'),
+                'No feedback'
+              )}</div>
+            </td>
+            <td>
+              <div class="badge-row">${notificationBadges.join('')}</div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      usersEmpty.classList.toggle('hidden', users.length > 0);
+    };
+
+    const renderList = (container, emptyState, items, renderer) => {
+      container.innerHTML = items.map(renderer).join('');
+      emptyState.classList.toggle('hidden', items.length > 0);
+    };
+
+    const renderData = (payload) => {
+      const summary = payload.summary || {};
+      const users = Array.isArray(payload.users) ? payload.users : [];
+      const recentFeedback = Array.isArray(payload.recentFeedback) ? payload.recentFeedback : [];
+      const recentBrandRequests = Array.isArray(payload.recentBrandRequests) ? payload.recentBrandRequests : [];
+      const recentWishlistItems = Array.isArray(payload.recentWishlistItems) ? payload.recentWishlistItems : [];
+
+      statUsers.textContent = String(summary.users || 0);
+      statWishlist.textContent = String(summary.wishlistItems || 0);
+      statFollows.textContent = String(summary.followedBrands || 0);
+      statFeedback.textContent = String(summary.feedback || 0);
+      statRequests.textContent = String(summary.requestedBrands || 0);
+
+      renderUsers(users);
+
+      renderList(feedbackList, feedbackEmpty, recentFeedback, (item) => `
+        <article class="list-item">
+          <div class="list-item-header">
+            <div>
+              <div class="list-item-title">${escapeHtml(item.email || 'No email')}</div>
+              <div class="meta">${escapeHtml(item.uid || '-')} · ${escapeHtml(formatDate(item.createdAt))}</div>
+            </div>
+            <div class="badge-row">
+              ${item.platform ? `<span class="badge">${escapeHtml(item.platform)}</span>` : ''}
+              ${item.screenLabel ? `<span class="badge">${escapeHtml(item.screenLabel)}</span>` : ''}
+              ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
+            </div>
+          </div>
+          <p class="list-item-copy">${escapeHtml(item.message || 'No message')}</p>
+        </article>
+      `);
+
+      renderList(requestsList, requestsEmpty, recentBrandRequests, (item) => `
+        <article class="list-item">
+          <div class="list-item-header">
+            <div>
+              <div class="list-item-title">${escapeHtml(item.brandName || item.siteHost || 'Requested brand')}</div>
+              <div class="meta">${escapeHtml(item.email || 'No email')} · ${escapeHtml(formatDate(item.lastRequestedAt || item.updatedAt || item.createdAt))}</div>
+            </div>
+            <div class="badge-row">
+              ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
+              ${item.requestCount ? `<span class="badge">${escapeHtml(`${item.requestCount} request${item.requestCount === 1 ? '' : 's'}`)}</span>` : ''}
+            </div>
+          </div>
+          <p class="list-item-copy">${escapeHtml(item.siteUrl || item.canonicalBrandId || '')}</p>
+        </article>
+      `);
+
+      renderList(wishlistList, wishlistEmpty, recentWishlistItems, (item) => `
+        <article class="list-item">
+          <div class="list-item-header">
+            <div>
+              <div class="list-item-title">${escapeHtml(item.name || 'Saved item')}</div>
+              <div class="meta">${escapeHtml(item.email || 'No email')} · ${escapeHtml(item.brand || 'Unknown brand')}</div>
+            </div>
+            <div class="badge-row">
+              ${item.currentPrice ? `<span class="badge">${escapeHtml(formatPrice(item.currentPrice))}</span>` : ''}
+              ${item.selectedSize ? `<span class="badge">${escapeHtml(item.selectedSize)}</span>` : ''}
+              ${item.isBought ? '<span class="badge is-active">Bought</span>' : ''}
+            </div>
+          </div>
+          <p class="list-item-copy">${escapeHtml(item.productUrl || '')}</p>
+        </article>
+      `);
+    };
+
+    const loadData = async () => {
+      setStatus(dashboardStatus, 'Loading Firestore admin data...');
+      refreshButton.disabled = true;
+
+      try {
+        const response = await fetch('/api/admin/data', {
+          credentials: 'same-origin'
+        });
+
+        if (response.status === 401) {
+          clearData();
+          showLogin();
+          setStatus(loginStatus, 'Session expired. Enter the password again.', 'error');
+          return;
+        }
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to load admin data');
+        }
+
+        renderData(payload);
+        showDashboard();
+        setStatus(dashboardStatus, 'Firestore data is up to date.', 'success');
+      } catch (error) {
+        setStatus(dashboardStatus, error.message || 'Unable to load admin data.', 'error');
+      } finally {
+        refreshButton.disabled = false;
+      }
+    };
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(loginForm);
+      const password = String(formData.get('password') || '');
+
+      loginButton.disabled = true;
+      setStatus(loginStatus, 'Checking password...');
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to sign in');
+        }
+
+        loginForm.reset();
+        setStatus(loginStatus, 'Signed in.', 'success');
+        await loadData();
+      } catch (error) {
+        setStatus(loginStatus, error.message || 'Unable to sign in.', 'error');
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    refreshButton.addEventListener('click', () => {
+      loadData();
+    });
+
+    logoutButton.addEventListener('click', async () => {
+      logoutButton.disabled = true;
+      setStatus(dashboardStatus, 'Signing out...');
+
+      try {
+        await fetch('/api/admin/logout', {
+          method: 'POST',
+          credentials: 'same-origin'
+        });
+      } finally {
+        logoutButton.disabled = false;
+        clearData();
+        setStatus(loginStatus, '');
+        setStatus(dashboardStatus, '');
+        showLogin();
+      }
+    });
+
+    const bootstrap = async () => {
+      try {
+        const response = await fetch('/api/admin/session', {
+          credentials: 'same-origin'
+        });
+        const payload = await response.json();
+
+        if (payload.authenticated) {
+          await loadData();
+          return;
+        }
+      } catch (error) {
+        setStatus(loginStatus, 'Unable to check admin session.', 'error');
+      }
+
+      clearData();
+      showLogin();
+    };
+
+    bootstrap();
+  </script>
+</body>
+</html>

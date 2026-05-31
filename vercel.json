@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
     { "source": "/get-extension", "destination": "/get-extension.html" },
     { "source": "/tutorial", "destination": "/tutorial.html" },
     { "source": "/terms", "destination": "/terms.html" },
