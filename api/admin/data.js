@@ -110,6 +110,20 @@ function mapFeedback(doc) {
   };
 }
 
+function mapUser(doc) {
+  const data = doc.data() || {};
+
+  return {
+    uid: data.uid || doc.id,
+    email: data.email || '',
+    createdAt: timestampToIso(data.createdAt),
+    inviteGateRequired: Boolean(data.inviteGateRequired),
+    inviteCode: data.inviteCode || '',
+    inviteUrl: data.inviteUrl || '',
+    pushNotifications: mapPushNotifications(data.pushNotifications)
+  };
+}
+
 function buildUserGroup(user, items, keys) {
   const sortedItems = sortByTimestamp(items, keys);
   const latestActivityMillis = sortedItems.length ? getTimestampFromKeys(sortedItems[0], keys) : 0;
@@ -126,6 +140,60 @@ function sortUserGroups(groups) {
   return [...groups].sort((left, right) => {
     return timestampToMillis(right.latestActivityAt) - timestampToMillis(left.latestActivityAt);
   });
+}
+
+function getSection(req) {
+  const url = new URL(req.url || '/api/admin/data', 'http://localhost');
+  return url.searchParams.get('section') || 'users';
+}
+
+async function getSummary(db) {
+  const [
+    usersAgg,
+    wishlistAgg,
+    followedAgg,
+    feedbackAgg,
+    requestsAgg
+  ] = await Promise.all([
+    db.collection('users').count().get(),
+    db.collectionGroup('wishlistItems').count().get(),
+    db.collectionGroup('followedBrands').count().get(),
+    db.collectionGroup('feedback').count().get(),
+    db.collectionGroup('requestedBrands').count().get()
+  ]);
+
+  return {
+    users: usersAgg.data().count || 0,
+    wishlistItems: wishlistAgg.data().count || 0,
+    followedBrands: followedAgg.data().count || 0,
+    feedback: feedbackAgg.data().count || 0,
+    requestedBrands: requestsAgg.data().count || 0
+  };
+}
+
+function getParentUid(doc) {
+  return doc.ref.parent && doc.ref.parent.parent ? doc.ref.parent.parent.id : '';
+}
+
+async function getUsersMap(db) {
+  const usersSnap = await db.collection('users').get();
+  const users = usersSnap.docs.map(mapUser);
+  const byUid = new Map(users.map((user) => [user.uid, user]));
+
+  return {
+    users: sortByTimestamp(users, ['createdAt']),
+    byUid
+  };
+}
+
+function attachUser(item, usersByUid, uid) {
+  const user = usersByUid.get(uid) || {};
+
+  return {
+    ...item,
+    uid,
+    email: user.email || ''
+  };
 }
 
 async function getUserAdminRecord(userDoc) {
@@ -203,65 +271,140 @@ module.exports = async (req, res) => {
 
   try {
     const db = getFirestore();
-    const usersSnap = await db.collection('users').get();
-    const userRecords = await Promise.all(usersSnap.docs.map(getUserAdminRecord));
-    const users = sortByTimestamp(userRecords, ['createdAt']);
+    const section = getSection(req);
+    const summary = await getSummary(db);
 
-    const wishlistGroups = sortUserGroups(users
-      .filter((user) => user._wishlistItems.length > 0)
-      .map((user) => buildUserGroup(user, user._wishlistItems, ['updatedAt', 'savedAt', 'createdAt'])));
+    if (section === 'users') {
+      const { users } = await getUsersMap(db);
 
-    const recentFeedback = sortByTimestamp(
-      users.flatMap((user) => user._feedback.map((item) => ({
-        ...item,
-        uid: user.uid,
-        email: item.email || user.email
-      }))),
-      ['createdAt']
-    ).slice(0, 25);
+      return setJson(res, 200, {
+        ok: true,
+        summary,
+        section,
+        users
+      });
+    }
 
-    const followedBrandGroups = sortUserGroups(users
-      .filter((user) => user._followedBrands.length > 0)
-      .map((user) => buildUserGroup(user, user._followedBrands, ['updatedAt', 'subscribedAt'])));
+    const { byUid } = await getUsersMap(db);
 
-    const brandRequestGroups = sortUserGroups(users
-      .filter((user) => user._requestedBrands.length > 0)
-      .map((user) => buildUserGroup(user, user._requestedBrands, ['lastRequestedAt', 'updatedAt', 'createdAt'])));
+    if (section === 'wishlist') {
+      const snap = await db.collectionGroup('wishlistItems').get();
+      const items = sortByTimestamp(
+        snap.docs.map((doc) => attachUser(mapWishlistItem(doc), byUid, getParentUid(doc))),
+        ['updatedAt', 'savedAt', 'createdAt']
+      );
 
-    const payloadUsers = users.map((user) => ({
-      uid: user.uid,
-      email: user.email,
-      createdAt: user.createdAt,
-      inviteGateRequired: user.inviteGateRequired,
-      inviteCode: user.inviteCode,
-      inviteUrl: user.inviteUrl,
-      pushNotifications: user.pushNotifications,
-      counts: user.counts,
-      previews: user.previews
-    }));
+      const groups = sortUserGroups(
+        Array.from(items.reduce((acc, item) => {
+          if (!acc.has(item.uid)) {
+            acc.set(item.uid, {
+              uid: item.uid,
+              email: item.email,
+              items: []
+            });
+          }
 
-    const summary = payloadUsers.reduce((totals, user) => ({
-      users: totals.users + 1,
-      followedBrands: totals.followedBrands + user.counts.followedBrands,
-      wishlistItems: totals.wishlistItems + user.counts.wishlistItems,
-      requestedBrands: totals.requestedBrands + user.counts.requestedBrands,
-      feedback: totals.feedback + user.counts.feedback
-    }), {
-      users: 0,
-      followedBrands: 0,
-      wishlistItems: 0,
-      requestedBrands: 0,
-      feedback: 0
-    });
+          acc.get(item.uid).items.push(item);
+          return acc;
+        }, new Map()).values()).map((group) => buildUserGroup(group, group.items, ['updatedAt', 'savedAt', 'createdAt']))
+      );
 
-    return setJson(res, 200, {
-      ok: true,
-      summary,
-      users: payloadUsers,
-      wishlistGroups,
-      followedBrandGroups,
-      recentFeedback,
-      brandRequestGroups
+      return setJson(res, 200, {
+        ok: true,
+        summary,
+        section,
+        wishlistGroups: groups
+      });
+    }
+
+    if (section === 'followed') {
+      const snap = await db.collectionGroup('followedBrands').get();
+      const items = sortByTimestamp(
+        snap.docs.map((doc) => attachUser(mapFollowedBrand(doc), byUid, getParentUid(doc))),
+        ['updatedAt', 'subscribedAt']
+      );
+
+      const groups = sortUserGroups(
+        Array.from(items.reduce((acc, item) => {
+          if (!acc.has(item.uid)) {
+            acc.set(item.uid, {
+              uid: item.uid,
+              email: item.email,
+              items: []
+            });
+          }
+
+          acc.get(item.uid).items.push(item);
+          return acc;
+        }, new Map()).values()).map((group) => buildUserGroup(group, group.items, ['updatedAt', 'subscribedAt']))
+      );
+
+      return setJson(res, 200, {
+        ok: true,
+        summary,
+        section,
+        followedBrandGroups: groups
+      });
+    }
+
+    if (section === 'requests') {
+      const snap = await db.collectionGroup('requestedBrands').get();
+      const items = sortByTimestamp(
+        snap.docs.map((doc) => attachUser(mapRequestedBrand(doc), byUid, getParentUid(doc))),
+        ['lastRequestedAt', 'updatedAt', 'createdAt']
+      );
+
+      const groups = sortUserGroups(
+        Array.from(items.reduce((acc, item) => {
+          if (!acc.has(item.uid)) {
+            acc.set(item.uid, {
+              uid: item.uid,
+              email: item.email,
+              items: []
+            });
+          }
+
+          acc.get(item.uid).items.push(item);
+          return acc;
+        }, new Map()).values()).map((group) => buildUserGroup(group, group.items, ['lastRequestedAt', 'updatedAt', 'createdAt']))
+      );
+
+      return setJson(res, 200, {
+        ok: true,
+        summary,
+        section,
+        brandRequestGroups: groups
+      });
+    }
+
+    if (section === 'feedback') {
+      const snap = await db.collectionGroup('feedback').get();
+      const items = sortByTimestamp(
+        snap.docs.map((doc) => {
+          const item = mapFeedback(doc);
+          const uid = getParentUid(doc);
+          const user = byUid.get(uid) || {};
+
+          return {
+            ...item,
+            uid,
+            email: item.email || user.email || ''
+          };
+        }),
+        ['createdAt']
+      ).slice(0, 50);
+
+      return setJson(res, 200, {
+        ok: true,
+        summary,
+        section,
+        recentFeedback: items
+      });
+    }
+
+    return setJson(res, 400, {
+      ok: false,
+      error: 'Unknown admin section'
     });
   } catch (error) {
     return setJson(res, 500, {

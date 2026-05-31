@@ -599,10 +599,10 @@
                   <tr>
                     <th>User</th>
                     <th>Created</th>
-                    <th>Counts</th>
-                    <th>Followed Brands</th>
-                    <th>Saved Items</th>
-                    <th>Requests / Feedback</th>
+                    <th>Invite</th>
+                    <th>Platform</th>
+                    <th>Push</th>
+                    <th>Permission</th>
                     <th>Notifications</th>
                   </tr>
                 </thead>
@@ -617,7 +617,7 @@
           <div class="stack">
             <div>
               <h2 class="section-title">Wishlist Items</h2>
-              <p class="section-copy">Recent saved products across all users, including the user email, brand, price, size, and saved product link.</p>
+              <p class="section-copy">Wishlist items grouped by user, ordered by each user’s latest saved item. Each group shows the latest 5 first, with a show-more expander for the rest.</p>
             </div>
             <div class="list" id="wishlist-list"></div>
             <div class="empty hidden" id="wishlist-empty">No wishlist items found.</div>
@@ -628,7 +628,7 @@
           <div class="stack">
             <div>
               <h2 class="section-title">Followed Brands</h2>
-              <p class="section-copy">Recent brand follows across all users, with notification settings and source links where available.</p>
+              <p class="section-copy">Followed brands grouped by user and ordered by each user’s latest follow activity.</p>
             </div>
             <div class="list" id="followed-list"></div>
             <div class="empty hidden" id="followed-empty">No followed brands found.</div>
@@ -651,7 +651,7 @@
           <div class="stack">
             <div>
               <h2 class="section-title">Brand Requests</h2>
-              <p class="section-copy">Requested brands users tried to add to the app, with request counts, status, and target site details.</p>
+              <p class="section-copy">Requested brands grouped by user and ordered by each user’s latest request activity.</p>
             </div>
             <div class="list" id="requests-list"></div>
             <div class="empty hidden" id="requests-empty">No brand requests found.</div>
@@ -683,6 +683,8 @@
     const followedEmpty = document.getElementById('followed-empty');
     const statTabs = Array.from(document.querySelectorAll('[data-tab]'));
     const tabPanels = Array.from(document.querySelectorAll('[data-panel]'));
+    const tabCache = new Map();
+    let activeTab = 'users';
 
     const statUsers = document.getElementById('stat-users');
     const statWishlist = document.getElementById('stat-wishlist');
@@ -763,6 +765,7 @@
       requestsList.innerHTML = '';
       wishlistList.innerHTML = '';
       followedList.innerHTML = '';
+      tabCache.clear();
       usersEmpty.classList.remove('hidden');
       feedbackEmpty.classList.remove('hidden');
       requestsEmpty.classList.remove('hidden');
@@ -801,36 +804,21 @@
             </td>
             <td>${escapeHtml(formatDate(user.createdAt))}</td>
             <td>
-              <div class="meta">Wishlist: ${user.counts.wishlistItems}</div>
-              <div class="meta">Follows: ${user.counts.followedBrands}</div>
-              <div class="meta">Feedback: ${user.counts.feedback}</div>
-              <div class="meta">Requests: ${user.counts.requestedBrands}</div>
+              <div class="meta">${user.inviteGateRequired ? 'Invite gate enabled' : 'Invite gate off'}</div>
+              <div class="meta">${escapeHtml(user.inviteCode || 'No invite code')}</div>
             </td>
             <td>
-              <div class="preview-list">${renderBadges(
-                user.previews.followedBrands || [],
-                (brand) => escapeHtml(brand.brandName || brand.brandId || 'Brand')
-              )}</div>
+              <div class="meta">${escapeHtml(user.pushNotifications?.platform || '-')}</div>
             </td>
             <td>
-              <div class="preview-list">${renderBadges(
-                user.previews.wishlistItems || [],
-                (item) => escapeHtml(item.name || item.productUrl || 'Item')
-              )}</div>
+              <div class="meta">${user.pushNotifications?.enabled ? 'Push enabled' : 'Push off'}</div>
             </td>
             <td>
-              <div class="preview-list">${renderBadges(
-                user.previews.requestedBrands || [],
-                (item) => escapeHtml(item.brandName || item.siteHost || 'Request')
-              )}</div>
-              <div class="preview-list">${renderBadges(
-                user.previews.feedback || [],
-                (item) => escapeHtml(item.screenLabel || item.platform || 'Feedback'),
-                'No feedback'
-              )}</div>
+              <div class="meta">${escapeHtml(user.pushNotifications?.permissionStatus || '-')}</div>
             </td>
             <td>
               <div class="badge-row">${notificationBadges.join('')}</div>
+              <div class="meta">${escapeHtml(formatDate(user.pushNotifications?.updatedAt))}</div>
             </td>
           </tr>
         `;
@@ -874,11 +862,6 @@
 
     const renderData = (payload) => {
       const summary = payload.summary || {};
-      const users = Array.isArray(payload.users) ? payload.users : [];
-      const wishlistGroups = Array.isArray(payload.wishlistGroups) ? payload.wishlistGroups : [];
-      const followedBrandGroups = Array.isArray(payload.followedBrandGroups) ? payload.followedBrandGroups : [];
-      const recentFeedback = Array.isArray(payload.recentFeedback) ? payload.recentFeedback : [];
-      const brandRequestGroups = Array.isArray(payload.brandRequestGroups) ? payload.brandRequestGroups : [];
 
       statUsers.textContent = String(summary.users || 0);
       statWishlist.textContent = String(summary.wishlistItems || 0);
@@ -886,100 +869,114 @@
       statFeedback.textContent = String(summary.feedback || 0);
       statRequests.textContent = String(summary.requestedBrands || 0);
 
-      renderUsers(users);
-      renderGroupedCollection(
-        followedList,
-        followedEmpty,
-        followedBrandGroups,
-        (item) => `
-          <div class="group-row">
-            <div class="group-row-title">${escapeHtml(item.brandName || item.brandId || 'Unknown brand')}</div>
-            <div class="badge-row">
-              ${item.salesEnabled ? '<span class="badge is-active">Sales</span>' : '<span class="badge is-muted">Sales off</span>'}
-              ${item.allUpdatesEnabled ? '<span class="badge is-active">All updates</span>' : '<span class="badge is-muted">Limited updates</span>'}
-            </div>
-            <div class="group-row-copy">
-              ${item.siteUrl ? `<a href="${escapeHtml(item.siteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.siteUrl)}</a>` : 'No site URL'}<br />
-              Followed: ${escapeHtml(formatDate(item.subscribedAt))} · Updated: ${escapeHtml(formatDate(item.updatedAt))}
-            </div>
-          </div>
-        `,
-        'followed brand'
-      );
+      if (payload.section === 'users') {
+        renderUsers(Array.isArray(payload.users) ? payload.users : []);
+      }
 
-      renderList(feedbackList, feedbackEmpty, recentFeedback, (item) => `
-        <article class="list-item">
-          <div class="list-item-header">
-            <div>
-              <div class="list-item-title">${escapeHtml(item.email || 'No email')}</div>
-              <div class="meta">${escapeHtml(item.uid || '-')} · ${escapeHtml(formatDate(item.createdAt))}</div>
+      if (payload.section === 'followed') {
+        renderGroupedCollection(
+          followedList,
+          followedEmpty,
+          Array.isArray(payload.followedBrandGroups) ? payload.followedBrandGroups : [],
+          (item) => `
+            <div class="group-row">
+              <div class="group-row-title">${escapeHtml(item.brandName || item.brandId || 'Unknown brand')}</div>
+              <div class="badge-row">
+                ${item.salesEnabled ? '<span class="badge is-active">Sales</span>' : '<span class="badge is-muted">Sales off</span>'}
+                ${item.allUpdatesEnabled ? '<span class="badge is-active">All updates</span>' : '<span class="badge is-muted">Limited updates</span>'}
+              </div>
+              <div class="group-row-copy">
+                ${item.siteUrl ? `<a href="${escapeHtml(item.siteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.siteUrl)}</a>` : 'No site URL'}<br />
+                Followed: ${escapeHtml(formatDate(item.subscribedAt))} · Updated: ${escapeHtml(formatDate(item.updatedAt))}
+              </div>
             </div>
-            <div class="badge-row">
-              ${item.platform ? `<span class="badge">${escapeHtml(item.platform)}</span>` : ''}
-              ${item.screenLabel ? `<span class="badge">${escapeHtml(item.screenLabel)}</span>` : ''}
-              ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
-            </div>
-          </div>
-          <p class="list-item-copy">${escapeHtml(item.message || 'No message')}</p>
-        </article>
-      `);
+          `,
+          'followed brand'
+        );
+      }
 
-      renderGroupedCollection(
-        requestsList,
-        requestsEmpty,
-        brandRequestGroups,
-        (item) => `
-          <div class="group-row">
-            <div class="group-row-title">${escapeHtml(item.brandName || item.siteHost || 'Requested brand')}</div>
-            <div class="badge-row">
-              ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
-              ${item.requestCount ? `<span class="badge">${escapeHtml(`${item.requestCount} request${item.requestCount === 1 ? '' : 's'}`)}</span>` : ''}
+      if (payload.section === 'feedback') {
+        renderList(feedbackList, feedbackEmpty, Array.isArray(payload.recentFeedback) ? payload.recentFeedback : [], (item) => `
+          <article class="list-item">
+            <div class="list-item-header">
+              <div>
+                <div class="list-item-title">${escapeHtml(item.email || 'No email')}</div>
+                <div class="meta">${escapeHtml(item.uid || '-')} · ${escapeHtml(formatDate(item.createdAt))}</div>
+              </div>
+              <div class="badge-row">
+                ${item.platform ? `<span class="badge">${escapeHtml(item.platform)}</span>` : ''}
+                ${item.screenLabel ? `<span class="badge">${escapeHtml(item.screenLabel)}</span>` : ''}
+                ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
+              </div>
             </div>
-            <div class="group-row-copy">
-              ${escapeHtml(item.siteUrl || item.canonicalBrandId || 'No site URL')}<br />
-              Last requested: ${escapeHtml(formatDate(item.lastRequestedAt || item.updatedAt || item.createdAt))}
-            </div>
-          </div>
-        `,
-        'requested brand'
-      );
+            <p class="list-item-copy">${escapeHtml(item.message || 'No message')}</p>
+          </article>
+        `);
+      }
 
-      renderGroupedCollection(
-        wishlistList,
-        wishlistEmpty,
-        wishlistGroups,
-        (item) => `
-          <div class="group-row">
-            <div class="group-row-title">${escapeHtml(item.name || 'Saved item')}</div>
-            <div class="badge-row">
-              ${item.currentPrice ? `<span class="badge">${escapeHtml(formatPrice(item.currentPrice))}</span>` : ''}
-              ${item.selectedSize ? `<span class="badge">${escapeHtml(item.selectedSize)}</span>` : ''}
-              ${item.isBought ? '<span class="badge is-active">Bought</span>' : ''}
+      if (payload.section === 'requests') {
+        renderGroupedCollection(
+          requestsList,
+          requestsEmpty,
+          Array.isArray(payload.brandRequestGroups) ? payload.brandRequestGroups : [],
+          (item) => `
+            <div class="group-row">
+              <div class="group-row-title">${escapeHtml(item.brandName || item.siteHost || 'Requested brand')}</div>
+              <div class="badge-row">
+                ${item.status ? `<span class="badge">${escapeHtml(item.status)}</span>` : ''}
+                ${item.requestCount ? `<span class="badge">${escapeHtml(`${item.requestCount} request${item.requestCount === 1 ? '' : 's'}`)}</span>` : ''}
+              </div>
+              <div class="group-row-copy">
+                ${escapeHtml(item.siteUrl || item.canonicalBrandId || 'No site URL')}<br />
+                Last requested: ${escapeHtml(formatDate(item.lastRequestedAt || item.updatedAt || item.createdAt))}
+              </div>
             </div>
-            <div class="group-row-copy">
-              Saved by: ${escapeHtml(item.email || group.email || 'No email')}<br />
-              ${escapeHtml(item.brand || 'Unknown brand')} · ${escapeHtml(item.uid || '-')}<br />
-              ${escapeHtml(item.productUrl || 'No product URL')}<br />
-              Saved: ${escapeHtml(formatDate(item.savedAt || item.updatedAt || item.createdAt))}
+          `,
+          'requested brand'
+        );
+      }
+
+      if (payload.section === 'wishlist') {
+        renderGroupedCollection(
+          wishlistList,
+          wishlistEmpty,
+          Array.isArray(payload.wishlistGroups) ? payload.wishlistGroups : [],
+          (item, group) => `
+            <div class="group-row">
+              <div class="group-row-title">${escapeHtml(item.name || 'Saved item')}</div>
+              <div class="badge-row">
+                ${item.currentPrice ? `<span class="badge">${escapeHtml(formatPrice(item.currentPrice))}</span>` : ''}
+                ${item.selectedSize ? `<span class="badge">${escapeHtml(item.selectedSize)}</span>` : ''}
+                ${item.isBought ? '<span class="badge is-active">Bought</span>' : ''}
+              </div>
+              <div class="group-row-copy">
+                Saved by: ${escapeHtml(item.email || group.email || 'No email')}<br />
+                ${escapeHtml(item.brand || 'Unknown brand')} · ${escapeHtml(item.uid || '-')}<br />
+                ${escapeHtml(item.productUrl || 'No product URL')}<br />
+                Saved: ${escapeHtml(formatDate(item.savedAt || item.updatedAt || item.createdAt))}
+              </div>
             </div>
-          </div>
-        `,
-        'wishlist item'
-      );
+          `,
+          'wishlist item'
+        );
+      }
     };
 
-    statTabs.forEach((button) => {
-      button.addEventListener('click', () => {
-        setActiveTab(button.dataset.tab);
-      });
-    });
+    const loadSection = async (section, force = false) => {
+      if (!force && tabCache.has(section)) {
+        renderData(tabCache.get(section));
+        setActiveTab(section);
+        showDashboard();
+        activeTab = section;
+        return;
+      }
 
-    const loadData = async () => {
-      setStatus(dashboardStatus, 'Loading Firestore admin data...');
+      activeTab = section;
+      setStatus(dashboardStatus, `Loading ${section}...`);
       refreshButton.disabled = true;
 
       try {
-        const response = await fetch('/api/admin/data', {
+        const response = await fetch(`/api/admin/data?section=${encodeURIComponent(section)}`, {
           credentials: 'same-origin'
         });
 
@@ -996,7 +993,9 @@
           throw new Error(payload.error || 'Unable to load admin data');
         }
 
+        tabCache.set(section, payload);
         renderData(payload);
+        setActiveTab(section);
         showDashboard();
         setStatus(dashboardStatus, 'Firestore data is up to date.', 'success');
       } catch (error) {
@@ -1005,6 +1004,12 @@
         refreshButton.disabled = false;
       }
     };
+
+    statTabs.forEach((button) => {
+      button.addEventListener('click', () => {
+        loadSection(button.dataset.tab);
+      });
+    });
 
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -1033,7 +1038,7 @@
 
         loginForm.reset();
         setStatus(loginStatus, 'Signed in.', 'success');
-        await loadData();
+        await loadSection('users', true);
       } catch (error) {
         setStatus(loginStatus, error.message || 'Unable to sign in.', 'error');
       } finally {
@@ -1042,7 +1047,7 @@
     });
 
     refreshButton.addEventListener('click', () => {
-      loadData();
+      loadSection(activeTab, true);
     });
 
     logoutButton.addEventListener('click', async () => {
@@ -1071,7 +1076,7 @@
         const payload = await response.json();
 
         if (payload.authenticated) {
-          await loadData();
+          await loadSection('users', true);
           return;
         }
       } catch (error) {
