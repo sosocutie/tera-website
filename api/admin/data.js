@@ -106,6 +106,14 @@ function mapFeedback(doc) {
   };
 }
 
+function buildUserGroup(user, items, keys) {
+  return {
+    uid: user.uid,
+    email: user.email,
+    items: sortByTimestamp(items, keys)
+  };
+}
+
 async function getUserAdminRecord(userDoc) {
   const data = userDoc.data() || {};
   const userRef = userDoc.ref;
@@ -185,6 +193,10 @@ module.exports = async (req, res) => {
     const userRecords = await Promise.all(usersSnap.docs.map(getUserAdminRecord));
     const users = sortByTimestamp(userRecords, ['createdAt']);
 
+    const wishlistGroups = users
+      .filter((user) => user._wishlistItems.length > 0)
+      .map((user) => buildUserGroup(user, user._wishlistItems, ['updatedAt', 'savedAt', 'createdAt']));
+
     const recentWishlistItems = sortByTimestamp(
       users.flatMap((user) => user._wishlistItems.map((item) => ({
         ...item,
@@ -203,23 +215,13 @@ module.exports = async (req, res) => {
       ['createdAt']
     ).slice(0, 25);
 
-    const recentFollowedBrands = sortByTimestamp(
-      users.flatMap((user) => user._followedBrands.map((item) => ({
-        ...item,
-        uid: user.uid,
-        email: user.email
-      }))),
-      ['updatedAt', 'subscribedAt']
-    ).slice(0, 50);
+    const followedBrandGroups = users
+      .filter((user) => user._followedBrands.length > 0)
+      .map((user) => buildUserGroup(user, user._followedBrands, ['updatedAt', 'subscribedAt']));
 
-    const recentBrandRequests = sortByTimestamp(
-      users.flatMap((user) => user._requestedBrands.map((item) => ({
-        ...item,
-        uid: user.uid,
-        email: user.email
-      }))),
-      ['lastRequestedAt', 'updatedAt', 'createdAt']
-    ).slice(0, 25);
+    const brandRequestGroups = users
+      .filter((user) => user._requestedBrands.length > 0)
+      .map((user) => buildUserGroup(user, user._requestedBrands, ['lastRequestedAt', 'updatedAt', 'createdAt']));
 
     const payloadUsers = users.map((user) => ({
       uid: user.uid,
@@ -251,10 +253,11 @@ module.exports = async (req, res) => {
       ok: true,
       summary,
       users: payloadUsers,
+      wishlistGroups,
       recentWishlistItems,
-      recentFollowedBrands,
+      followedBrandGroups,
       recentFeedback,
-      recentBrandRequests
+      brandRequestGroups
     });
   } catch (error) {
     return setJson(res, 500, {
