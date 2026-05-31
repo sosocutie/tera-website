@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tera Admin Invites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --clay: #c8664a;
+      --clay-deep: #a84d34;
+      --sand: #f6efe8;
+      --paper: #fffdfa;
+      --ink: #1d1713;
+      --ink-soft: #655b54;
+      --line: #e7dbd2;
+      --success: #2f6f53;
+      --danger: #a63d35;
+      --warning: #a66b1f;
+      --shadow: 0 28px 70px rgba(60, 36, 21, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Instrument Sans', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(200, 102, 74, 0.18), transparent 34%),
+        linear-gradient(180deg, #fbf7f2 0%, #f3ebe3 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(1180px, calc(100vw - 24px));
+      margin: 12px auto;
+      background: rgba(255, 253, 250, 0.9);
+      border: 1px solid rgba(231, 219, 210, 0.96);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand img {
+      width: 82px;
+      height: auto;
+      display: block;
+    }
+
+    .top-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .page {
+      padding: 28px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--clay);
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .section-copy {
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    .toolbar,
+    .actions,
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .field-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+
+    .field,
+    .textarea,
+    .select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font: inherit;
+      background: white;
+      color: var(--ink);
+    }
+
+    .textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field:focus,
+    .textarea:focus,
+    .select:focus {
+      outline: none;
+      border-color: rgba(200, 102, 74, 0.65);
+      box-shadow: 0 0 0 4px rgba(200, 102, 74, 0.12);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 140ms ease, opacity 140ms ease, background 140ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: var(--clay);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--clay-deep);
+    }
+
+    .btn-secondary {
+      background: #efe2d7;
+      color: var(--ink);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .status {
+      min-height: 20px;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.warning {
+      color: var(--warning);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(246, 239, 232, 0.72), rgba(255, 255, 255, 0.94));
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f4ece5;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .auth-card {
+      display: grid;
+      gap: 16px;
+    }
+
+    .auth-summary {
+      display: grid;
+      gap: 6px;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .results-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #faf4ef;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .meta {
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .empty {
+      padding: 22px;
+      text-align: center;
+      color: var(--ink-soft);
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    @media (max-width: 900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100vw - 14px, 100%);
+        margin: 7px auto;
+        border-radius: 22px;
+      }
+
+      .masthead,
+      .page,
+      .card {
+        padding: 18px;
+      }
+
+      .title {
+        font-size: 30px;
+      }
+
+      table {
+        min-width: 680px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="Tera home">
+        <img src="/assets/tera-wordmark.png" alt="Tera" />
+      </a>
+      <nav class="top-links">
+        <a class="btn btn-ghost" href="/admin">Back To Admin</a>
+      </nav>
+    </header>
+
+    <section class="page">
+      <div>
+        <p class="eyebrow">Internal</p>
+        <h1 class="title">Send beta invites without scripts.</h1>
+        <p class="subtitle">This page stays UI-only. Firebase Auth provides the admin token, and the live `sendBetaInvitesAdmin` function handles invite generation, tracking, and email sending.</p>
+      </div>
+
+      <section class="card" id="login-card">
+        <h2 class="section-title">Admin sign in</h2>
+        <p class="section-copy">Use the same private website admin password gate first. Firebase sign-in is used only for the live beta invite send action.</p>
+        <form class="grid" id="login-form">
+          <div class="field-wrap">
+            <label class="field-label" for="password">Password</label>
+            <input class="field" id="password" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="login-button" type="submit">Unlock invite admin</button>
+          </div>
+          <p class="status" id="login-status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card hidden" id="invite-app">
+        <div class="two-col">
+          <section class="grid">
+            <div class="card auth-card">
+              <div>
+                <h2 class="section-title">Firebase admin auth</h2>
+                <p class="section-copy">The live Cloud Function requires a Firebase ID token. Sign in with your approved Google admin account before sending invites.</p>
+              </div>
+              <div class="auth-summary" id="auth-summary">
+                <div>Not signed in to Firebase yet.</div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-primary" id="firebase-login-button" type="button">Sign In With Google</button>
+                <button class="btn btn-secondary hidden" id="firebase-logout-button" type="button">Sign Out</button>
+              </div>
+              <p class="status" id="firebase-status" aria-live="polite"></p>
+            </div>
+
+            <div class="card grid">
+              <div>
+                <h2 class="section-title">Invite sender</h2>
+                <p class="section-copy">Paste one or many emails, upload a CSV, choose a campaign, and send. The backend decides whether each email is sent, resent, redeemed already, invalid, or failed.</p>
+              </div>
+
+              <div class="field-wrap">
+                <label class="field-label" for="campaign-select">Campaign</label>
+                <select class="select" id="campaign-select" required>
+                  <option value="">Choose a campaign</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <div class="field-wrap" style="flex: 1 1 280px;">
+                  <label class="field-label" for="new-campaign-input">Add new campaign</label>
+                  <input class="field" id="new-campaign-input" type="text" placeholder="ex: beta-launch-2026" />
+                </div>
+                <button class="btn btn-secondary" id="add-campaign-button" type="button">Add campaign</button>
+              </div>
+
+              <div class="field-wrap">
+                <label class="field-label" for="emails-input">Emails</label>
+                <textarea class="textarea" id="emails-input" placeholder="Paste one email per line or comma-separated emails"></textarea>
+                <div class="meta">One email per line works best. Comma-separated paste is also supported.</div>
+              </div>
+
+              <div class="field-wrap">
+                <label class="field-label" for="csv-input">CSV upload</label>
+                <input class="field" id="csv-input" type="file" accept=".csv,text/csv" />
+                <div class="meta">We’ll extract anything that looks like an email from the CSV.</div>
+              </div>
+
+              <label class="checkbox-row">
+                <input id="dry-run-toggle" type="checkbox" />
+                <span>Dry run only</span>
+              </label>
+
+              <div class="stats">
+                <article class="stat">
+                  <span class="stat-label">Total Parsed</span>
+                  <strong class="stat-value" id="stat-total">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Valid</span>
+                  <strong class="stat-value" id="stat-valid">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Invalid</span>
+                  <strong class="stat-value" id="stat-invalid">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Unique</span>
+                  <strong class="stat-value" id="stat-unique">0</strong>
+                </article>
+              </div>
+
+              <div class="pill-row hidden" id="invalid-preview"></div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="send-button" type="button">Send Invites</button>
+              </div>
+              <p class="status" id="send-status" aria-live="polite"></p>
+            </div>
+          </section>
+
+          <section class="grid">
+            <div class="card">
+              <h2 class="section-title">Results summary</h2>
+              <div class="stats">
+                <article class="stat">
+                  <span class="stat-label">Sent</span>
+                  <strong class="stat-value" id="summary-sent">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Resent</span>
+                  <strong class="stat-value" id="summary-resent">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Skipped</span>
+                  <strong class="stat-value" id="summary-skipped">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Invalid</span>
+                  <strong class="stat-value" id="summary-invalid">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Failed</span>
+                  <strong class="stat-value" id="summary-failed">0</strong>
+                </article>
+                <article class="stat">
+                  <span class="stat-label">Total</span>
+                  <strong class="stat-value" id="summary-total">0</strong>
+                </article>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="row" style="justify-content: space-between;">
+                <div>
+                  <h2 class="section-title">Send results</h2>
+                  <p class="section-copy">Per-email results from the live Firebase Function.</p>
+                </div>
+                <button class="btn btn-ghost hidden" id="download-results-button" type="button">Download CSV</button>
+              </div>
+              <div class="results-wrap hidden" id="results-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Reason</th>
+                      <th>Invite Code</th>
+                      <th>Source</th>
+                    </tr>
+                  </thead>
+                  <tbody id="results-body"></tbody>
+                </table>
+              </div>
+              <div class="empty" id="results-empty">No invite run yet.</div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js';
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      onAuthStateChanged,
+      signInWithPopup,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
+
+    const ADMIN_EMAIL = 'solejstewart@gmail.com';
+    const INVITE_ENDPOINT = 'https://us-central1-wishlist-curator.cloudfunctions.net/sendBetaInvitesAdmin';
+    const firebaseConfig = {
+      apiKey: 'AIzaSyDgrqektwBoRbb0D2fzBgJYheoHaREpEs4',
+      authDomain: 'wishlist-curator.firebaseapp.com',
+      projectId: 'wishlist-curator',
+      storageBucket: 'wishlist-curator.firebasestorage.app',
+      messagingSenderId: '1034692738989',
+      appId: '1:1034692738989:web:e3a2d36bd5efa1efa9eb24'
+    };
+
+    const loginCard = document.getElementById('login-card');
+    const inviteApp = document.getElementById('invite-app');
+    const loginForm = document.getElementById('login-form');
+    const loginButton = document.getElementById('login-button');
+    const loginStatus = document.getElementById('login-status');
+
+    const firebaseLoginButton = document.getElementById('firebase-login-button');
+    const firebaseLogoutButton = document.getElementById('firebase-logout-button');
+    const firebaseStatus = document.getElementById('firebase-status');
+    const authSummary = document.getElementById('auth-summary');
+
+    const campaignSelect = document.getElementById('campaign-select');
+    const newCampaignInput = document.getElementById('new-campaign-input');
+    const addCampaignButton = document.getElementById('add-campaign-button');
+    const emailsInput = document.getElementById('emails-input');
+    const csvInput = document.getElementById('csv-input');
+    const dryRunToggle = document.getElementById('dry-run-toggle');
+    const sendButton = document.getElementById('send-button');
+    const sendStatus = document.getElementById('send-status');
+
+    const statTotal = document.getElementById('stat-total');
+    const statValid = document.getElementById('stat-valid');
+    const statInvalid = document.getElementById('stat-invalid');
+    const statUnique = document.getElementById('stat-unique');
+    const invalidPreview = document.getElementById('invalid-preview');
+
+    const summarySent = document.getElementById('summary-sent');
+    const summaryResent = document.getElementById('summary-resent');
+    const summarySkipped = document.getElementById('summary-skipped');
+    const summaryInvalid = document.getElementById('summary-invalid');
+    const summaryFailed = document.getElementById('summary-failed');
+    const summaryTotal = document.getElementById('summary-total');
+
+    const resultsWrap = document.getElementById('results-wrap');
+    const resultsEmpty = document.getElementById('results-empty');
+    const resultsBody = document.getElementById('results-body');
+    const downloadResultsButton = document.getElementById('download-results-button');
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({
+      prompt: 'select_account'
+    });
+
+    let firebaseUser = null;
+    let lastResults = [];
+    let csvEmails = [];
+
+    const setStatus = (element, message, tone = '') => {
+      element.textContent = message;
+      element.className = 'status';
+      if (tone) {
+        element.classList.add(tone);
+      }
+    };
+
+    const showLogin = () => {
+      loginCard.classList.remove('hidden');
+      inviteApp.classList.add('hidden');
+    };
+
+    const showInviteApp = () => {
+      loginCard.classList.add('hidden');
+      inviteApp.classList.remove('hidden');
+    };
+
+    const slugify = (value) => String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+
+    const escapeHtml = (value) => String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+    const parseEmailsFromText = (value) => {
+      return String(value || '')
+        .split(/[\n,\t; ]+/)
+        .map((email) => email.trim().toLowerCase())
+        .filter(Boolean);
+    };
+
+    const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+
+    const getParsedEmails = () => {
+      const pasted = parseEmailsFromText(emailsInput.value);
+      const all = [...pasted, ...csvEmails].map((email) => email.toLowerCase());
+      const unique = Array.from(new Set(all));
+      const valid = unique.filter(isValidEmail);
+      const invalid = unique.filter((email) => !isValidEmail(email));
+
+      return {
+        total: all.length,
+        unique: unique.length,
+        valid,
+        invalid
+      };
+    };
+
+    const updatePreview = () => {
+      const parsed = getParsedEmails();
+      statTotal.textContent = String(parsed.total);
+      statValid.textContent = String(parsed.valid.length);
+      statInvalid.textContent = String(parsed.invalid.length);
+      statUnique.textContent = String(parsed.unique);
+
+      if (parsed.invalid.length) {
+        invalidPreview.classList.remove('hidden');
+        invalidPreview.innerHTML = parsed.invalid
+          .slice(0, 12)
+          .map((email) => `<span class="pill">${escapeHtml(email)}</span>`)
+          .join('');
+      } else {
+        invalidPreview.classList.add('hidden');
+        invalidPreview.innerHTML = '';
+      }
+    };
+
+    const populateCampaigns = (campaigns) => {
+      const current = campaignSelect.value;
+      const options = ['<option value="">Choose a campaign</option>']
+        .concat(campaigns.map((campaign) => `<option value="${escapeHtml(campaign.slug)}">${escapeHtml(campaign.label)}</option>`));
+
+      campaignSelect.innerHTML = options.join('');
+
+      if (current) {
+        campaignSelect.value = current;
+      }
+    };
+
+    const loadCampaigns = async () => {
+      try {
+        const response = await fetch('/api/admin/invite-campaigns', {
+          credentials: 'same-origin'
+        });
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to load campaigns');
+        }
+
+        populateCampaigns(Array.isArray(payload.campaigns) ? payload.campaigns : []);
+      } catch (error) {
+        setStatus(sendStatus, error.message || 'Unable to load campaigns.', 'error');
+      }
+    };
+
+    const updateAuthUi = async (user) => {
+      firebaseUser = user;
+
+      if (!user) {
+        authSummary.innerHTML = '<div>Not signed in to Firebase yet.</div>';
+        firebaseLoginButton.classList.remove('hidden');
+        firebaseLogoutButton.classList.add('hidden');
+        return;
+      }
+
+      const email = user.email || '';
+
+      authSummary.innerHTML = `
+        <div>Signed in as <strong>${escapeHtml(email || 'Unknown account')}</strong></div>
+        <div>Approved admin email required: <strong>${escapeHtml(ADMIN_EMAIL)}</strong></div>
+      `;
+
+      firebaseLoginButton.classList.add('hidden');
+      firebaseLogoutButton.classList.remove('hidden');
+
+      if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        setStatus(firebaseStatus, 'This Google account is signed in, but it is not the approved admin email.', 'error');
+      } else {
+        setStatus(firebaseStatus, 'Firebase admin auth is ready.', 'success');
+      }
+    };
+
+    const renderResults = (summary, results) => {
+      summarySent.textContent = String(summary.sent || 0);
+      summaryResent.textContent = String(summary.resent || 0);
+      summarySkipped.textContent = String(summary.skipped || 0);
+      summaryInvalid.textContent = String(summary.invalid || 0);
+      summaryFailed.textContent = String(summary.failed || 0);
+      summaryTotal.textContent = String(summary.total || 0);
+
+      lastResults = Array.isArray(results) ? results : [];
+
+      if (!lastResults.length) {
+        resultsWrap.classList.add('hidden');
+        resultsEmpty.classList.remove('hidden');
+        downloadResultsButton.classList.add('hidden');
+        resultsBody.innerHTML = '';
+        return;
+      }
+
+      resultsBody.innerHTML = lastResults.map((result) => `
+        <tr>
+          <td>${escapeHtml(result.email || '')}</td>
+          <td>${escapeHtml(result.status || '')}</td>
+          <td>${escapeHtml(result.reason || '')}</td>
+          <td>${escapeHtml(result.inviteCode || '')}</td>
+          <td>${escapeHtml(result.source || '')}</td>
+        </tr>
+      `).join('');
+
+      resultsWrap.classList.remove('hidden');
+      resultsEmpty.classList.add('hidden');
+      downloadResultsButton.classList.remove('hidden');
+    };
+
+    const downloadResultsCsv = () => {
+      if (!lastResults.length) return;
+
+      const lines = [
+        ['email', 'status', 'reason', 'inviteCode', 'source'].join(',')
+      ].concat(lastResults.map((row) => [
+        row.email || '',
+        row.status || '',
+        row.reason || '',
+        row.inviteCode || '',
+        row.source || ''
+      ].map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')));
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `tera-beta-invite-results-${Date.now()}.csv`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    };
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      loginButton.disabled = true;
+      setStatus(loginStatus, 'Checking password...');
+
+      try {
+        const formData = new FormData(loginForm);
+        const password = String(formData.get('password') || '');
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to sign in');
+        }
+
+        loginForm.reset();
+        setStatus(loginStatus, 'Signed in.', 'success');
+        showInviteApp();
+        await loadCampaigns();
+      } catch (error) {
+        setStatus(loginStatus, error.message || 'Unable to sign in.', 'error');
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    firebaseLoginButton.addEventListener('click', async () => {
+      firebaseLoginButton.disabled = true;
+      setStatus(firebaseStatus, 'Opening Google sign-in...');
+
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (error) {
+        setStatus(firebaseStatus, error.message || 'Unable to sign in with Google.', 'error');
+      } finally {
+        firebaseLoginButton.disabled = false;
+      }
+    });
+
+    firebaseLogoutButton.addEventListener('click', async () => {
+      firebaseLogoutButton.disabled = true;
+
+      try {
+        await signOut(auth);
+      } catch (error) {
+        setStatus(firebaseStatus, error.message || 'Unable to sign out.', 'error');
+      } finally {
+        firebaseLogoutButton.disabled = false;
+      }
+    });
+
+    addCampaignButton.addEventListener('click', async () => {
+      const label = newCampaignInput.value.trim();
+      const slug = slugify(label);
+
+      if (!label) {
+        setStatus(sendStatus, 'Enter a campaign name first.', 'warning');
+        return;
+      }
+
+      if (!firebaseUser) {
+        setStatus(sendStatus, 'Sign in with the approved Google admin account before creating a campaign.', 'warning');
+        return;
+      }
+
+      if ((firebaseUser.email || '').toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        setStatus(sendStatus, 'You are signed in with the wrong Google account for campaign management.', 'error');
+        return;
+      }
+
+      addCampaignButton.disabled = true;
+      setStatus(sendStatus, 'Creating campaign...');
+
+      try {
+        const response = await fetch('/api/admin/invite-campaigns', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            label,
+            slug,
+            createdBy: firebaseUser?.email || ADMIN_EMAIL
+          })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || 'Unable to create campaign');
+        }
+
+        newCampaignInput.value = '';
+        await loadCampaigns();
+        campaignSelect.value = payload.campaign.slug;
+        setStatus(sendStatus, 'Campaign created.', 'success');
+      } catch (error) {
+        setStatus(sendStatus, error.message || 'Unable to create campaign.', 'error');
+      } finally {
+        addCampaignButton.disabled = false;
+      }
+    });
+
+    emailsInput.addEventListener('input', updatePreview);
+
+    csvInput.addEventListener('change', async () => {
+      const file = csvInput.files && csvInput.files[0];
+
+      if (!file) {
+        csvEmails = [];
+        updatePreview();
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        csvEmails = parseEmailsFromText(text);
+        updatePreview();
+        setStatus(sendStatus, `Loaded ${csvEmails.length} email values from CSV.`, 'success');
+      } catch (error) {
+        csvEmails = [];
+        updatePreview();
+        setStatus(sendStatus, error.message || 'Unable to read CSV file.', 'error');
+      }
+    });
+
+    sendButton.addEventListener('click', async () => {
+      const campaign = String(campaignSelect.value || '').trim();
+      const parsed = getParsedEmails();
+      const validEmails = parsed.valid;
+
+      if (!campaign) {
+        setStatus(sendStatus, 'Choose a campaign before sending.', 'warning');
+        return;
+      }
+
+      if (!firebaseUser) {
+        setStatus(sendStatus, 'Sign in with Google first so we can send the Firebase ID token.', 'warning');
+        return;
+      }
+
+      if ((firebaseUser.email || '').toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        setStatus(sendStatus, 'You are signed in with the wrong Google account for admin sending.', 'error');
+        return;
+      }
+
+      if (!validEmails.length) {
+        setStatus(sendStatus, 'Add at least one valid email first.', 'warning');
+        return;
+      }
+
+      sendButton.disabled = true;
+      setStatus(sendStatus, `About to send to ${validEmails.length} unique valid emails...`);
+
+      try {
+        const token = await firebaseUser.getIdToken(true);
+        const response = await fetch(INVITE_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            emails: validEmails,
+            campaign,
+            dryRun: dryRunToggle.checked
+          })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error || payload.message || 'Invite send failed');
+        }
+
+        renderResults(payload.summary || {}, payload.results || []);
+        setStatus(sendStatus, payload.dryRun ? 'Dry run completed.' : 'Invite send completed.', 'success');
+      } catch (error) {
+        setStatus(sendStatus, error.message || 'Invite send failed.', 'error');
+      } finally {
+        sendButton.disabled = false;
+      }
+    });
+
+    downloadResultsButton.addEventListener('click', downloadResultsCsv);
+
+    onAuthStateChanged(auth, updateAuthUi);
+
+    const bootstrap = async () => {
+      try {
+        const response = await fetch('/api/admin/session', {
+          credentials: 'same-origin'
+        });
+        const payload = await response.json();
+
+        if (payload.authenticated) {
+          showInviteApp();
+          await loadCampaigns();
+          return;
+        }
+      } catch (error) {
+        setStatus(loginStatus, 'Unable to check admin session.', 'error');
+      }
+
+      showLogin();
+    };
+
+    updatePreview();
+    renderResults({}, []);
+    bootstrap();
+  </script>
+</body>
+</html>
