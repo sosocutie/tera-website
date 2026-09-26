@@ -199,82 +199,106 @@
 
     <p class="eyebrow">Legal</p>
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: May 2026</p>
-
+    <p class="updated">Last updated: September 26, 2026</p>
     <section>
       <h2>Overview</h2>
-      <p>Tera is a shopping app that helps you track products, follow brands, and get notified about sales and restocks. We built this to be simple and useful — and we apply the same thinking to how we handle your data.</p>
-      <p>We collect only what we need to make the app work. We don't sell your data. Here's exactly what we do and don't do.</p>
+      <p>Tera is a shopping app that helps you save products, follow brands, and get notified about sales and restocks. This policy explains what information Tera handles, why we use it, and the controls available to you.</p>
+      <p>We use information to run Tera, support your account and saved products, deliver notifications, respond to feedback, and diagnose problems. We do not sell your personal data.</p>
     </section>
-
     <section>
       <h2>What we collect</h2>
-      <p>When you create an account, we collect:</p>
+      <p>Depending on how you use Tera, we handle:</p>
       <ul>
-        <li>Your name and email address (via email, Apple, or Google sign-in)</li>
-        <li>The brands you follow</li>
-        <li>The products you save to your wishlist</li>
-        <li>Your notification preferences</li>
+        <li>Account information, including your account ID, name, email address, and sign-in information from email, Apple, or Google sign-in.</li>
+        <li>The products you save, including product URLs and relevant details such as names, brands, prices, and images, along with the brands you follow and your preferences.</li>
+        <li>Feedback you choose to send us and any attachments, including screenshots, you choose to upload, to help us respond and improve the app.</li>
+        <li>Notification delivery tokens and notification preferences, so we can send notifications to your device according to your settings.</li>
+        <li>App usage information collected through PostHog in older app builds, as explained below. PostHog collection has been removed from version 0.0.1 (83).</li>
+        <li>Crash reports and diagnostics, which can include an account identifier, app and device information, build information, and error details, to help us find and fix problems.</li>
+        <li>Recently Viewed product information stored locally on your device, only after you enable that feature, as explained below.</li>
       </ul>
-      <p>This information is stored securely in Firebase (Google Cloud) and is used only to power your Tera experience.</p>
+      <p>We use Firebase services to manage accounts, store app data and uploaded screenshots, and deliver notifications. Crash diagnostics and historical analytics are described below. The Recently Viewed list is stored locally on your device.</p>
     </section>
-
     <section>
-      <h2>Browser & Safari Extension</h2>
-      <p>The Tera browser extension only collects data when you actively click the Tera button on a product page. It does not run in the background, track your browsing history, or collect any data passively.</p>
-      <p>When you click the button, we collect:</p>
-      <ul>
-        <li>The URL of the product page</li>
-        <li>Basic product information visible on the page (name, price, image)</li>
-      </ul>
-      <p>We may also use Zyte as a service provider to help retrieve or structure product-page information needed to save an item and support price tracking. Nothing is collected unless you initiate it.</p>
+      <h2>Safari extension: saving products</h2>
+      <p>When you save an item with the Safari extension, Tera sends the product URL and relevant product details to its backend to support your wishlist and price tracking. Details may include the product name, brand, price, and image URL.</p>
+      <p>Tera may use Zyte to help retrieve or structure product information for saved items and price tracking.</p>
     </section>
-
+    <section>
+      <h2>Safari extension: Recently Viewed</h2>
+      <p>You can enable the optional Recently Viewed feature for Tera's Safari extension. It is off by default. After you enable it, Tera automatically remembers supported product pages you visit on sites where the Safari extension has permission. Collection in Private Browsing is blocked.</p>
+      <p>Entries may include product names, brands, URLs, image URLs, and viewing times. The list is stored locally on your device and holds up to 10 supported product entries covering the previous seven days. Older entries are removed when the feature next accesses or updates its storage; removal does not run continuously in the background.</p>
+      <p>You can remove individual products, clear the list, or turn Recently Viewed off and clear it. Removing a product from Recently Viewed does not delete an item you have already saved to your wishlist. When you remove products or clear the list, Tera may remember their URLs locally for up to seven days to keep them from immediately reappearing.</p>
+      <p>If you save a product from Recently Viewed, Tera sends it to its backend to add it to your wishlist and support price tracking. Product images may load from retailer or image-hosting servers when displayed, so those servers may receive requests from your device even though the list itself is stored locally.</p>
+    </section>
+    <section>
+      <h2>Crash diagnostics</h2>
+      <p>Tera uses Firebase Crashlytics to diagnose crashes and errors. Reports include technical diagnostics, device and app information, and identifiers. Tera attaches the signed-in user's account ID to help investigate problems. These reports are not anonymous.</p>
+      <p>Google retains crash traces and associated identifiers for 90 days before beginning removal from live and backup systems. Deleting your Tera account does not instantly erase these reports.</p>
+    </section>
+    <section>
+      <h2>PostHog and older app builds</h2>
+      <p>PostHog collection has been removed from Tera app version 0.0.1 (83). This change applies to that build; it does not disable collection in older builds or erase previously collected data.</p>
+      <p>Tera previously used PostHog to understand feature usage and improve the app, such as whether people completed onboarding, saved products, and returned to the app. Older builds may still send usage information. Historical analytics can be linked to account identifiers and may include email addresses, app/build information, and error details. Account-linked analytics are not anonymous.</p>
+      <p>Tera retains backend support for requesting deletion of historical account-linked PostHog data. This does not mean that all historical profiles or events have already been erased. For requests about this data, contact <a href="mailto:team@tryteraapp.com">team@tryteraapp.com</a>.</p>
+    </section>
     <section>
       <h2>Brand notifications</h2>
-      <p>Tera subscribes to brand email lists on behalf of the app to surface sale and restock alerts. This is an internal process — we receive and process brand emails to deliver relevant notifications to users who follow those brands. We do not share your personal information with brands.</p>
+      <p>Tera receives and processes brand emails to surface sale and restock alerts for people who follow those brands. Tera subscribes to those email lists for this purpose; following a brand in Tera does not subscribe your email address to that brand's mailing list. We do not share your wishlist or brand preferences with the brands you follow.</p>
     </section>
-
     <section>
       <h2>What we don't do</h2>
       <ul>
-        <li>Sell or rent your personal data to third parties</li>
-        <li>Use your data for advertising outside of Tera</li>
-        <li>Track your browsing passively via the extension</li>
-        <li>Share your wishlist or preferences with brands you follow</li>
+        <li>Sell or rent your personal data to third parties.</li>
+        <li>Use your data for advertising outside of Tera.</li>
+        <li>Enable Recently Viewed unless you choose to turn it on, or include Private Browsing in that feature.</li>
+        <li>Share your wishlist or preferences with the brands you follow.</li>
       </ul>
     </section>
-
     <section>
-      <h2>Data retention & deletion</h2>
-      <p>You can delete your account at any time from the app settings. When you do, your personal data — including your wishlist, brand follows, and preferences — is permanently deleted from our systems.</p>
-    </section>
-
-    <section>
-      <h2>Third-party services</h2>
-      <p>Tera uses the following third-party services to operate:</p>
+      <h2>Data retention and deletion</h2>
+      <p>The Recently Viewed list uses the local storage limits and controls described above. Account information, saved products, brand preferences, feedback, uploaded attachments, analytics, and diagnostics are handled separately from that local list.</p>
+      <p>You can initiate account deletion through Settings → Delete Account. You will be asked to confirm your request and verify your identity.</p>
+      <p>Deletion removes your authentication account and starts server cleanup of your profile, saved products, brand follows and preferences, submitted feedback, and uploaded screenshots. Server cleanup runs asynchronously and may continue in the background after you are signed out.</p>
+      <p>We retain a restricted internal record containing the former account ID, deletion and cleanup timestamps, and status. It helps prevent old sessions or delayed processing from recreating deleted data. It excludes email addresses, wishlist contents, and feedback. This record is not anonymous and currently has no automatic expiration.</p>
+      <p>Different types of information have different retention periods:</p>
       <ul>
-        <li>Firebase (Google) — authentication and data storage</li>
-        <li>Expo — app infrastructure and push notifications</li>
-        <li>Zyte — product page data retrieval and extraction</li>
-        <li>Zapier — email processing pipeline</li>
+        <li>Application logs are currently retained for 30 days.</li>
+        <li>Required audit logs are retained for 400 days.</li>
+        <li>Deleted uploaded files can remain recoverable for seven days.</li>
+        <li>Crash traces and associated identifiers follow the separate 90-day Crashlytics retention period described above, after which removal begins.</li>
       </ul>
-      <p>Each of these services has their own privacy policy governing how they handle data.</p>
+      <p>These periods apply only to the types of information listed. Provider-managed backups and deletion processes are separate, so account deletion does not immediately erase every copy from every system, log, or backup. Historical PostHog data is handled as described above.</p>
+      <p>For questions or requests about deleting your account or data, contact <a href="mailto:team@tryteraapp.com">team@tryteraapp.com</a>.</p>
     </section>
-
+    <section>
+      <h2>Service providers</h2>
+      <p>Tera uses service providers for the following purposes:</p>
+      <ul>
+        <li>Firebase Authentication (Google) — account sign-in and authentication.</li>
+        <li>Cloud Firestore (Google) — storage of app data, such as saved products, brand preferences, notification settings, and feedback records.</li>
+        <li>Cloud Storage for Firebase (Google) — storage of uploaded feedback attachments, including screenshots.</li>
+        <li>Firebase Cloud Messaging (Google) — delivery of push notifications using device notification tokens.</li>
+        <li>Cloud Functions for Firebase and Google Cloud — backend processing, including product tracking, account-data cleanup, and application and audit logging.</li>
+        <li>Firebase Crashlytics (Google) — crash reports and diagnostics.</li>
+        <li>Expo — app infrastructure, builds, and updates.</li>
+        <li>Zyte — retrieval and extraction of product-page information for saved products and price tracking.</li>
+      </ul>
+      <p>PostHog is relevant to older app builds and historical analytics as described above; it does not collect analytics in version 0.0.1 (83).</p>
+      <p>Zapier was a former integration for processing brand emails. That workflow has been disabled. Disabling it does not by itself erase information processed in the past.</p>
+      <p>These providers process information for the purposes described above. Their handling and retention of information are also governed by the applicable service terms and privacy policies.</p>
+    </section>
     <section>
       <h2>Children's privacy</h2>
-      <p>Tera is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal data, please contact us and we'll delete it promptly.</p>
+      <p>Tera is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal data, please contact <a href="mailto:team@tryteraapp.com">team@tryteraapp.com</a> so we can investigate and arrange its removal.</p>
     </section>
-
     <section>
       <h2>Changes to this policy</h2>
-      <p>We may update this policy as the app evolves. If we make material changes, we'll notify you via the app or email. Continued use of Tera after changes means you accept the updated policy.</p>
+      <p>We may update this policy as Tera evolves. If we make material changes, we will notify you through the app or by email. The “Last updated” date will show when the revised policy was published.</p>
     </section>
-
     <div class="contact-box">
       <h2>Questions?</h2>
-      <p>Reach us anytime at <a href="mailto:team@tryteraapp.com">team@tryteraapp.com</a>. We're a small team and we actually read everything.</p>
+      <p>Contact us at <a href="mailto:team@tryteraapp.com">team@tryteraapp.com</a> with questions about this policy or your data.</p>
     </div>
 
   </div>
