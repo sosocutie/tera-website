@@ -5,6 +5,7 @@
     { "source": "/get-extension", "destination": "/get-extension.html" },
     { "source": "/tutorial", "destination": "/tutorial.html" },
     { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/privacy", "destination": "/privacy.html" }
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/support", "destination": "/support.html" }
   ]
 }
